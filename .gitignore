@@ -1,6 +1,11 @@
 HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.jar
+.mvn
+mvnw.cmd
+mvnw
+mydata.sql
+/src/main/resources/application.properties
 !**/src/main/**
 !**/src/test/**
 
