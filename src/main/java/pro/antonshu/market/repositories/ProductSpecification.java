@@ -26,4 +26,11 @@ public class ProductSpecification {
             return criteriaBuilder.between(root.get("price"), min_value, max_value);
         };
     }
+
+    public static Specification<Product> getProductsByCategory(int categoryId) {
+        return (Specification<Product>) (root, criteriaQuery, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("category"), categoryId);
+        };
+    }
+
 }

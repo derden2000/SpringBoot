@@ -28,8 +28,38 @@
 
 <div class="container">
     <h1>Вы находитесь в разделе наушники</h1>
+    <form th:action="@{/products}" method="GET">
+        <div class="input-group">
+            <input class="form-control" th:value="${param.min_price}" name="min_price" type="text"
+                   placeholder="Минимальная цена"/>
+            <input class="form-control" th:value="${param.max_price}" name="max_price" type="text"
+                   placeholder="Максимальная цена"/>
+            <select name="category">
+                <option th:text="'Выбрать категорию'" th:value="${param.category}"/>
+                <option th:each="element : ${categories}" th:text="${element.value}" th:selected="${element.key == param.category}" th:value="${element.key}"/>
+            </select>
+            <select name="sort_by">
+                <option th:text="'Сортировать по значению'" th:value="${param.sort_by}"/>
+                <option th:text="'ID'" th:selected="${param.sort_by}" value="id"/>
+                <option th:text="'Цена'" th:selected="${param.sort_by}" value="price"/>
+                <option th:text="'Название'" th:selected="${param.sort_by}" value="title"/>
+            </select>
+            <select name="page_values_num">
+                <option th:text="'Кол-во позиций на странице'" th:value="${param.page_values_num}"/>
+                <option th:text="'10'" th:selected="${param.page_values_num}" value="10"/>
+                <option th:text="'7'" th:selected="${param.page_values_num}" value="7"/>
+                <option th:text="'5'" th:selected="${param.page_values_num}" value="5"/>
+            </select>
+            <br>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Фильтровать</button>
+        <a class="btn btn-primary" th:href="@{'/products'}">Сбросить фильтр</a>
+    </form>
+
     <div class="panel panel-default">
         <div class="panel-heading">Список отсортированных продуктов</div>
+
         <table class="table" th:if="${products.size() > 0}">
             <thead>
             <tr style="font-weight: bold;">
@@ -41,8 +71,13 @@
             <tbody>
             <tr th:each="pr : ${products}">
                 <td th:text="${pr.id}"/>
-                <td th:text="${pr.title}"/>
+                <td>
+                    <span style="font-weight: bold" th:text="${pr.title}"/>
+                    <br>
+                    <span th:text="'Категория: ' + ${categories.get(pr.category)}"/>
+                </td>
                 <td th:text="${pr.price}"/>
+
             </tr>
             </tbody>
         </table>
@@ -52,65 +87,27 @@
     <span th:text="'Total pages (filtered): ' + ${pagesCount}"/>
     <br>
 
-    <form th:action="@{'/products?pageIndex=1&sort_by=' + ${sort_by} + '&page_values_num=' + ${page_values_num} + '&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">
-        <div class="form-row" style="padding-top: 15px">
-            <div class="col-auto">
-                <label>Минимальная цена</label>
-                <input name="min_price" type="text" value="0" class="form-control" placeholder="Minimum">
-            </div>
-            <div class="col-auto">
-                <label>Максимальная цена</label>
-                <input name="max_price" type="text" value="0" class="form-control" placeholder="Maxinun">
-            </div>
-            <button class=" col-auto btn btn-primary mb-2">Выбрать</button>
-        </div>
-
-    </form>
-
-    <div class="sort_buttons" style="display: flex; padding-top: 10px;">
-        <div class="dropdown" style="padding-right: 10px;">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Сортировать по значению
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item"
-                   th:href="@{'/products?pageIndex=1&sort_by=id&page_values_num=' + ${page_values_num} + '&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">ID</a>
-                <a class="dropdown-item"
-                   th:href="@{'/products?pageIndex=1&sort_by=title&page_values_num=' + ${page_values_num} + '&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">Название</a>
-                <a class="dropdown-item"
-                   th:href="@{'/products?pageIndex=1&sort_by=price&page_values_num=' + ${page_values_num} + '&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">Цена</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Количество записей на странице
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-bottom: 20px;">
-                <a class="dropdown-item"
-                   th:href="@{'/products?pageIndex=1&sort_by=' + ${sort_by} + '&page_values_num=5&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">5</a>
-                <a class="dropdown-item"
-                   th:href="@{'/products?pageIndex=1&sort_by=' + ${sort_by} + '&page_values_num=7&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">7</a>
-                <a class="dropdown-item"
-                   th:href="@{'/products?pageIndex=1&sort_by=' + ${sort_by} + '&page_values_num=10&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">10</a>
-            </div>
-        </div>
-    </div>
-
     <br>
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            <li class="page-item"><a class="page-link"
-                                     th:href="@{'/products?pageIndex=' + ${previous+1} + '&sort_by=' + ${sort_by} + '&page_values_num=' + ${page_values_num} + '&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">Previous
-                Page</a>
-            </li>
-            <li class="page-item"><a class="page-link"
-                                     th:href="@{'/products?pageIndex=' + ${next+1} + '&sort_by=' + ${sort_by} + '&page_values_num=' + ${page_values_num} + '&min_price=' + ${min_price} + '&max_price=' + ${max_price}}">Next
-                Page</a>
+            <li class="page-item" th:classappend="${page.getNumber() + 1 == i ? 'active' : ''}"
+                th:each="i : ${#numbers.sequence(1, page.getTotalPages())}">
+                <a th:class="page-link" th:text="${i}" th:href="@{'/products?pageIndex=' + ${i} + ${filtersDefWP}}"></a>
             </li>
         </ul>
     </nav>
+
+<!--    <nav aria-label="Page navigation">-->
+<!--        <ul class="pagination">-->
+<!--            <li class="page-item"><a class="page-link" -->
+<!--                                     th:href="@{'/products?pageIndex='+ ${page.previousOrFirstPageable().getPageNumber()} + ${filtersDefWP}}">Previous Page</a>-->
+<!--            </li>-->
+<!--            <li class="page-item"><a class="page-link"-->
+<!--                                     th:href="@{'/products?pageIndex=' + ${page.nextOrLastPageable().getPageNumber()} + ${filtersDefWP}}">Next Page</a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </nav>-->
+
 </div>
 </body>
 </html>
