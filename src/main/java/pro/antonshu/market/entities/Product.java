@@ -15,6 +15,12 @@ public class Product {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "category")
+    private Long category;
+
     @Column(name = "price")
     private BigDecimal price;
 
@@ -42,12 +48,30 @@ public class Product {
         this.price = price;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Long getCategory() {
+        return category;
+    }
+
+    public void setCategory(Long category) {
+        this.category = category;
+    }
+
     public Product() {
     }
 
-    public Product(Long id, String title, BigDecimal price) {
+    public Product(Long id, String title, String description, Long category, BigDecimal price) {
         this.id = id;
         this.title = title;
+        this.description = description;
+        this.category = category;
         this.price = price;
     }
 }
