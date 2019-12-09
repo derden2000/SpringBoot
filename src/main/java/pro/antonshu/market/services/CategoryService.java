@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import pro.antonshu.market.entities.Category;
 import pro.antonshu.market.repositories.CategoryRepository;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 public class CategoryService {
@@ -18,8 +17,7 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public Map<Long, String> getAllCategories() {
-        Map<Long, String> cats = categoryRepository.findAll().stream().collect(Collectors.toMap(Category::getId, Category::getTitle));
-        return cats;
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 }

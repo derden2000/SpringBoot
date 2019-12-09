@@ -21,4 +21,8 @@ public class ProductService {
     public Page<Product> findAll(Specification<Product> specification, PageRequest pageRequest) {
         return productRepository.findAll(specification, pageRequest);
     }
+
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).get();
+    }
 }
