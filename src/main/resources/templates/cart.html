@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <title>КОРЗИНА</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script th:src="@{js/add.js}"></script>
+    <script th:src="@{js/del.js}"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/products}">Главная<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cart}">Корзина <span id="cartCountNav" class="badge badge-light" th:text="${basket.size()}"></span>
+                        <span class="sr-only">товаров в корзине</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0" th:action="@{/search}" method="GET">
+                <button type="button" class="btn btn-primary" th:href="@{/cart}" style="padding-right: 10px;">
+                    Корзина <span class="badge badge-light" id="cartCount" th:text="${basket.size()}"></span>
+                </button>
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+            </form>
+        </div>
+    </nav>
+
+    <h1>Вы находитесь в разделе Корзина</h1>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Список продуктов в корзине</div>
+        <a th:href="@{/products}"></a>
+        <table class="table" th:if="${basket.size() > 0}">
+            <thead>
+            <tr style="font-weight: bold;">
+                <td>ID</td>
+                <td>Title</td>
+                <td>Price</td>
+                <td>Quantity</td>
+                <td>Cost</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="element : ${basket.getContent()}">
+                <td th:text="${sr.getProductById(element.key).id}"/>
+                <td>
+                    <span style="font-weight: bold" th:text="${sr.getProductById(element.key).title}"/>
+                    <br>
+                    <span th:text="'Категория: ' + ${sr.getProductById(element.key).category.title}"/>
+                </td>
+                <td th:text="${sr.getProductById(element.key).price}"/>
+                <td><input type="number"></td>
+                <td th:text="${element.value}"/>
+                <td>
+                    <button type="button" th:data-num="${sr.getProductById(element.key).id}" class="btn btn-add btn-success" th:classappend="${basket.contains(element.key) ? 'd-none' : ''}" >Добавить в корзину</button>
+                    <button type="button" th:data-num="${sr.getProductById(element.key).id}" class="btn btn-del btn-danger" th:classappend="${basket.contains(element.key) ? '' : 'd-none'}">Удалить из корзины</button>
+                </td>
+            </tr>
+            </tbody>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Сумма:</td>
+            <td th:text="${basket.getTotalCost()}"/>
+            <td></td>
+        </table>
+    </div>
+    <br>
+</div>
+</body>
+</html>

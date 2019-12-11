@@ -1,6 +1,7 @@
 package pro.antonshu.market.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "categories")
@@ -13,6 +14,9 @@ public class Category {
 
     @Column(name = "title")
     private String title;
+
+    @OneToMany(mappedBy = "category")
+    private List<Product> productsOfCategories;
 
     public Long getId() {
         return id;

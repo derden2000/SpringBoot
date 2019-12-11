@@ -22,11 +22,49 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script th:src="@{js/add.js}"></script>
+    <script th:src="@{js/del.js}"></script>
 </head>
 
 <body>
 
 <div class="container">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/products}">Главная<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cart}">Корзина <span class="badge badge-light" id="cartCountNav" th:text="${basket.size()}"></span>
+                        <span class="sr-only">товаров в корзине</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0" th:action="@{/search}" method="GET">
+                <button type="button" class="btn btn-primary" th:href="@{/cart}">
+                    Корзина <span class="badge badge-light" id="cartCount" th:text="${basket.size()}"></span>
+                </button>
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+            </form>
+        </div>
+    </nav>
+
     <h1>Вы находитесь в разделе наушники</h1>
     <form th:action="@{/products}" method="GET">
         <div class="input-group">
@@ -35,17 +73,17 @@
             <input class="form-control" th:value="${param.max_price}" name="max_price" type="text"
                    placeholder="Максимальная цена"/>
             <select name="category">
-                <option th:text="'Выбрать категорию'" th:value="${param.category}"/>
-                <option th:each="element : ${categories}" th:text="${element.value}" th:selected="${element.key == param.category}" th:value="${element.key}"/>
+                <option th:text="'Выбрать категорию'" th:value="null"/>
+                <option th:each="element : ${categories}" th:text="${element.title}" th:selected="${element.id == param.category}" th:value="${element.id}"/>
             </select>
             <select name="sort_by">
-                <option th:text="'Сортировать по значению'" th:value="${param.sort_by}"/>
+                <option th:text="'Сортировать по значению'" th:value="null"/>
                 <option th:text="'ID'" th:selected="${param.sort_by}" value="id"/>
                 <option th:text="'Цена'" th:selected="${param.sort_by}" value="price"/>
                 <option th:text="'Название'" th:selected="${param.sort_by}" value="title"/>
             </select>
             <select name="page_values_num">
-                <option th:text="'Кол-во позиций на странице'" th:value="${param.page_values_num}"/>
+                <option th:text="'Кол-во позиций на странице'" th:value="null"/>
                 <option th:text="'10'" th:selected="${param.page_values_num}" value="10"/>
                 <option th:text="'7'" th:selected="${param.page_values_num}" value="7"/>
                 <option th:text="'5'" th:selected="${param.page_values_num}" value="5"/>
@@ -66,6 +104,7 @@
                 <td>ID</td>
                 <td>Title</td>
                 <td>Price</td>
+                <td></td>
             </tr>
             </thead>
             <tbody>
@@ -74,10 +113,13 @@
                 <td>
                     <span style="font-weight: bold" th:text="${pr.title}"/>
                     <br>
-                    <span th:text="'Категория: ' + ${categories.get(pr.category)}"/>
+                    <span th:text="'Категория: ' + ${pr.category.title}"/>
                 </td>
                 <td th:text="${pr.price}"/>
-
+                <td>
+                    <button type="button" th:data-num="${pr.id}" th:data-price="${pr.price}" class="btn btn-add btn-success" th:classappend="${basket.contains(pr.id) ? 'd-none' : ''}" >Добавить в корзину</button>
+                    <button type="button" th:data-num="${pr.id}" class="btn btn-del btn-danger" th:classappend="${basket.contains(pr.id) ? '' : 'd-none'}">Удалить из корзины</button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -90,10 +132,12 @@
     <br>
     <nav aria-label="Page navigation">
         <ul class="pagination">
+            <li class="page-item"><a class="page-link" th:href="@{'/products?pageIndex='+ ${page.previousOrFirstPageable().getPageNumber()+1} + ${filtersDefWP}}">Previous Page</a></li>
             <li class="page-item" th:classappend="${page.getNumber() + 1 == i ? 'active' : ''}"
                 th:each="i : ${#numbers.sequence(1, page.getTotalPages())}">
                 <a th:class="page-link" th:text="${i}" th:href="@{'/products?pageIndex=' + ${i} + ${filtersDefWP}}"></a>
             </li>
+            <li class="page-item"><a class="page-link" th:href="@{'/products?pageIndex=' + ${page.nextOrLastPageable().getPageNumber()+1} + ${filtersDefWP}}">Next Page</a></li>
         </ul>
     </nav>
 
