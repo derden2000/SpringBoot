@@ -1,8 +1,8 @@
 package pro.antonshu.market.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Scope;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Data
 @Entity
-@Scope("singleton")
 @Table(name = "products")
 public class Product {
 
