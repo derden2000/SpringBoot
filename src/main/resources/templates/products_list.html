@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
@@ -31,39 +33,41 @@
 <body>
 
 <div class="container">
+    <div th:replace="~{header :: header(Catalog)}"/>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!--    <nav class="navbar navbar-expand-lg navbar-light bg-light">-->
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/products}">Главная<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}">Корзина <span class="badge badge-light" id="cartCountNav" th:text="${basket.size()}"></span>
-                        <span class="sr-only">товаров в корзине</span></a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Dropdown
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </li>
-            </ul>
-            <form class="form-inline my-2 my-lg-0" th:action="@{/search}" method="GET">
-                <button type="button" class="btn btn-primary" th:href="@{/cart}">
-                    Корзина <span class="badge badge-light" id="cartCount" th:text="${basket.size()}"></span>
-                </button>
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
-            </form>
-        </div>
-    </nav>
+
+    <!--        <div class="collapse navbar-collapse" id="navbarSupportedContent">-->
+    <!--            <ul class="navbar-nav mr-auto">-->
+    <!--                <li class="nav-item active">-->
+    <!--                    <a class="nav-link" th:href="@{/products}">Главная<span class="sr-only">(current)</span></a>-->
+    <!--                </li>-->
+    <!--                <li class="nav-item">-->
+    <!--                    <a class="nav-link" th:href="@{/cart}">Корзина <span class="badge badge-light" id="cartCountNav" th:text="${basket.size()}"></span>-->
+    <!--                        <span class="sr-only">товаров в корзине</span></a>-->
+    <!--                </li>-->
+    <!--                <li class="nav-item dropdown">-->
+    <!--                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+    <!--                        Dropdown-->
+    <!--                    </a>-->
+    <!--                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+    <!--                        <a class="dropdown-item" href="#">Action</a>-->
+    <!--                        <a class="dropdown-item" href="#">Another action</a>-->
+    <!--                        <div class="dropdown-divider"></div>-->
+    <!--                        <a class="dropdown-item" href="#">Something else here</a>-->
+    <!--                    </div>-->
+    <!--                </li>-->
+    <!--            </ul>-->
+    <!--            <form class="form-inline my-2 my-lg-0" th:action="@{/search}" method="GET">-->
+    <!--                <button type="button" class="btn btn-primary" th:href="@{/cart}">-->
+    <!--                    Корзина <span class="badge badge-light" id="cartCount" th:text="${basket.size()}"></span>-->
+    <!--                </button>-->
+    <!--                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+    <!--                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>-->
+    <!--            </form>-->
+    <!--        </div>-->
+    <!--    </nav>-->
 
     <h1>Вы находитесь в разделе наушники</h1>
     <form th:action="@{/products}" method="GET">
@@ -74,19 +78,20 @@
                    placeholder="Максимальная цена"/>
             <select name="category">
                 <option th:text="'Выбрать категорию'" th:value="null"/>
-                <option th:each="element : ${categories}" th:text="${element.title}" th:selected="${element.id == param.category}" th:value="${element.id}"/>
+                <option th:each="element : ${categories}" th:text="${element.title}"
+                        th:selected="${element.id == param.category}" th:value="${element.id}"/>
             </select>
             <select name="sort_by">
                 <option th:text="'Сортировать по значению'" th:value="null"/>
-                <option th:text="'ID'" th:selected="${param.sort_by}" value="id"/>
-                <option th:text="'Цена'" th:selected="${param.sort_by}" value="price"/>
-                <option th:text="'Название'" th:selected="${param.sort_by}" value="title"/>
+                <option th:text="'ID'" value="id"/>
+                <option th:text="'Цена'" value="price"/>
+                <option th:text="'Название'" value="title"/>
             </select>
             <select name="page_values_num">
                 <option th:text="'Кол-во позиций на странице'" th:value="null"/>
-                <option th:text="'10'" th:selected="${param.page_values_num}" value="10"/>
-                <option th:text="'7'" th:selected="${param.page_values_num}" value="7"/>
-                <option th:text="'5'" th:selected="${param.page_values_num}" value="5"/>
+                <option th:text="'10'" value="10"/>
+                <option th:text="'7'" value="7"/>
+                <option th:text="'5'" value="5"/>
             </select>
             <br>
         </div>
@@ -117,8 +122,15 @@
                 </td>
                 <td th:text="${pr.price}"/>
                 <td>
-                    <button type="button" th:data-num="${pr.id}" th:data-price="${pr.price}" class="btn btn-add btn-success" th:classappend="${basket.contains(pr.id) ? 'd-none' : ''}" >Добавить в корзину</button>
-                    <button type="button" th:data-num="${pr.id}" class="btn btn-del btn-danger" th:classappend="${basket.contains(pr.id) ? '' : 'd-none'}">Удалить из корзины</button>
+                    <button type="button" th:data-num="${pr.id}" th:data-price="${pr.price}" th:data-quantity="1"
+                            class="btn btn-add btn-success" th:classappend="${basket.contains(pr.id) ? 'd-none' : ''}">
+                        Добавить в корзину
+                    </button>
+                    <button type="button" th:data-num="${pr.id}"
+                            class="btn btn-del btn-danger" th:classappend="${basket.contains(pr.id) ? '' : 'd-none'}">
+                        Удалить из корзины
+                    </button>
+                    <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" th:href="@{'/edit/' + ${pr.id}}" class="btn btn-warning">Редактировать</a>
                 </td>
             </tr>
             </tbody>
@@ -132,25 +144,29 @@
     <br>
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            <li class="page-item"><a class="page-link" th:href="@{'/products?pageIndex='+ ${page.previousOrFirstPageable().getPageNumber()+1} + ${filtersDefWP}}">Previous Page</a></li>
+            <li class="page-item"><a class="page-link"
+                                     th:href="@{'/products?pageIndex='+ ${page.previousOrFirstPageable().getPageNumber()+1} + ${filtersDefWP}}">Previous
+                Page</a></li>
             <li class="page-item" th:classappend="${page.getNumber() + 1 == i ? 'active' : ''}"
                 th:each="i : ${#numbers.sequence(1, page.getTotalPages())}">
                 <a th:class="page-link" th:text="${i}" th:href="@{'/products?pageIndex=' + ${i} + ${filtersDefWP}}"></a>
             </li>
-            <li class="page-item"><a class="page-link" th:href="@{'/products?pageIndex=' + ${page.nextOrLastPageable().getPageNumber()+1} + ${filtersDefWP}}">Next Page</a></li>
+            <li class="page-item"><a class="page-link"
+                                     th:href="@{'/products?pageIndex=' + ${page.nextOrLastPageable().getPageNumber()+1} + ${filtersDefWP}}">Next
+                Page</a></li>
         </ul>
     </nav>
 
-<!--    <nav aria-label="Page navigation">-->
-<!--        <ul class="pagination">-->
-<!--            <li class="page-item"><a class="page-link" -->
-<!--                                     th:href="@{'/products?pageIndex='+ ${page.previousOrFirstPageable().getPageNumber()} + ${filtersDefWP}}">Previous Page</a>-->
-<!--            </li>-->
-<!--            <li class="page-item"><a class="page-link"-->
-<!--                                     th:href="@{'/products?pageIndex=' + ${page.nextOrLastPageable().getPageNumber()} + ${filtersDefWP}}">Next Page</a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </nav>-->
+    <!--    <nav aria-label="Page navigation">-->
+    <!--        <ul class="pagination">-->
+    <!--            <li class="page-item"><a class="page-link" -->
+    <!--                                     th:href="@{'/products?pageIndex='+ ${page.previousOrFirstPageable().getPageNumber()} + ${filtersDefWP}}">Previous Page</a>-->
+    <!--            </li>-->
+    <!--            <li class="page-item"><a class="page-link"-->
+    <!--                                     th:href="@{'/products?pageIndex=' + ${page.nextOrLastPageable().getPageNumber()} + ${filtersDefWP}}">Next Page</a>-->
+    <!--            </li>-->
+    <!--        </ul>-->
+    <!--    </nav>-->
 
 </div>
 </body>
