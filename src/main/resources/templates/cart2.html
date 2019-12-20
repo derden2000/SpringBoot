@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
@@ -34,7 +32,7 @@
 
 <div class="container">
     <div th:replace="~{header :: header(Cart)}" />
-
+    <br>
     <h1>Вы находитесь в разделе Корзина</h1>
 
     <div class="panel panel-default">
@@ -53,38 +51,33 @@
             </thead>
             <tbody>
             <tr th:each="element : ${basket.getContent()}">
-                <td th:text="${element.product.id}"/>
+                <td th:text="${sr.getProductById(element.key.key).id}"/>
                 <td>
-                    <span style="font-weight: bold" th:text="${element.product.title}"/>
+                    <span style="font-weight: bold" th:text="${sr.getProductById(element.key.key).title}"/>
                     <br>
-                    <span th:text="'Категория: ' + ${element.product.category.title}"/>
+                    <span th:text="'Категория: ' + ${sr.getProductById(element.key.key).category.title}"/>
                 </td>
-                <td th:text="${element.price}"/>
+                <td th:text="${sr.getProductById(element.key.key).price}"/>
                 <td>
-                    <form th:action="@{/cart_add}" method="POST">
-                        <input type="hidden" name="id" th:value="${element.product.id}">
-                        <input name="quantity" type="number">
-                        <button class="btn btn-light" type="submit">Применить</button>
-                    </form>
+                    <form th:action="@{/cart2change}" method="POST"></form>
+                    <input type="hidden" name="id" th:text="${sr.getProductById(element.key.key).id}">
+                    <input type="hidden" name="price" th:text="${sr.getProductById(element.key.key).price}">
+                    <input name="quantity" type="number">
+                    <button type="submit">Применить</button>
                 </td>
-                <td th:text="${element.getItemAmount()}"/>
+                <td th:text="$basket.getProductCost(element.key.key))}"/>
                 <td>
-
-                    <button type="button" th:data-num="${element.product.id}"
-                            class="btn btn-del btn-danger">Удалить из корзины
-                    </button>
+                    <button type="button" th:data-num="${sr.getProductById(element.key).id}" class="btn btn-add btn-success" th:classappend="${basket.contains(element.key) ? 'd-none' : ''}" >Добавить в корзину</button>
+                    <button type="button" th:data-num="${sr.getProductById(element.key).id}" class="btn btn-del btn-danger" th:classappend="${basket.contains(element.key) ? '' : 'd-none'}">Удалить из корзины</button>
                 </td>
             </tr>
             </tbody>
             <td></td>
             <td></td>
             <td></td>
+            <td>Сумма:</td>
+            <td th:text="${basket.getTotalCost()}"/>
             <td></td>
-            <td th:text="'Сумма: ' + ${basket.getTotalCost()}"/>
-            <td>
-                <a sec:authorize="isAuthenticated()" th:href="@{/order}"><button class="btn btn-success">Оформить заказ</button></a>
-                <a sec:authorize="!isAuthenticated()" th:href="@{/login}"><button class="btn btn-success">Оформить заказ</button></a>
-            </td>
         </table>
     </div>
     <br>

@@ -9,9 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pro.antonshu.market.entities.Category;
+import pro.antonshu.market.entities.Order;
 import pro.antonshu.market.entities.Product;
 import pro.antonshu.market.entities.User;
 import pro.antonshu.market.services.CategoryService;
+import pro.antonshu.market.services.OrderService;
 import pro.antonshu.market.services.ProductService;
 import pro.antonshu.market.services.UserService;
 import pro.antonshu.market.utils.Basket;
@@ -28,6 +30,7 @@ public class MainController {
     private ProductService productService;
     private CategoryService categoryService;
     private UserService userService;
+    private OrderService orderService;
 
     private Basket basket;
 
@@ -44,6 +47,11 @@ public class MainController {
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @PostConstruct
@@ -131,6 +139,7 @@ public class MainController {
     @PostMapping("/cart_add")
     public String addProductQuantity(Model model, @RequestParam(value = "id") Long id, @RequestParam(value = "quantity") Integer quantity) {
         System.out.println("Product quantity changed with id: " + id);
+        System.out.println("quantity: " + quantity);
         basket.add(id, quantity);
         System.out.println("Basket: " + basket.getContent());
         model.addAttribute(basket);
@@ -166,7 +175,16 @@ public class MainController {
         User user = userService.findByPhone(principal.getName());
         model.addAttribute("user", user);
         model.addAttribute(basket);
+        model.addAttribute("order", new Order(user, basket));
         return "order";
+    }
+
+    @PostMapping("/order_do")
+    public String orderDone(@ModelAttribute(name = "order") Order order) {
+//        model.addAttribute("order", order);
+        System.out.println("Order saved: " + order);
+        orderService.saveOrder(order);
+        return "order_do";
     }
 
     @GetMapping("/profile")
