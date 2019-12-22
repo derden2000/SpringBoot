@@ -1,6 +1,5 @@
 package pro.antonshu.market.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +25,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category")
+//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private Category category;
 
     @Column(name = "price")

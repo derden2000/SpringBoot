@@ -77,7 +77,7 @@ VALUES
 (2, 2);
 
 drop table if exists orders cascade;
-create table orders (id bigserial, user_id bigint, price numeric(8, 2), address text, primary key(id), constraint fk_user_id foreign key (user_id) references users (id));
+create table orders (id bigserial, order_date timestamp DEFAULT current_timestamp, user_id bigint, price numeric(8, 2), complete_status boolean default false, address text, primary key(id), constraint fk_user_id foreign key (user_id) references users (id));
 
 drop table if exists orders_items cascade;
 create table orders_items (id bigserial, order_id bigint, product_id bigint, quantity int, price numeric(8, 2), primary key(id), constraint fk_prod_id foreign key (product_id) references products (id), constraint fk_order_id foreign key (order_id) references orders (id));

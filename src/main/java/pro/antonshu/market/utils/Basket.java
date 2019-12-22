@@ -22,54 +22,14 @@ import java.util.Map;
 @Component
 @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Basket {
-//
-//    private Map<Long, Integer> content;
+
     private ProductService productService;
-//
+    private List<OrderItem> items;
+
     public Basket(ProductService productService) {
-//        this.content = new HashMap<>();
         this.items = new ArrayList<>();
         this.productService = productService;
     }
-//
-//    public boolean add(Long key, Integer value) {
-//        content.put(key, value);
-//        return true;
-//    }
-//
-//    public boolean del(Long key) {
-//        content.remove(key);
-//        return true;
-//    }
-//
-//    public Map<Long, Integer> getContent() {
-//        return content;
-//    }
-//
-//    public boolean contains(Long key) {
-//        return content.containsKey(key);
-//    }
-//
-//    public int size() {
-//        return content.size();
-//    }
-//
-//    public Long getTotalCost() {
-//        Long[] res = {0L};
-//        content.forEach((k, v) -> res[0] += productService.getProductById(k).getPrice().longValue() * v);
-//        return res[0];
-//    }
-//
-//    public Long getCostOfProduct(Long id) {
-//        return productService.getProductById(id).getPrice().longValue() * content.get(id);
-//    }
-
-    private List<OrderItem> items;
-
-//    @PostConstruct
-//    public void init() {
-//        items = new ArrayList<>();
-//    }
 
     public void clear() {
         items.clear();
@@ -85,17 +45,6 @@ public class Basket {
         items.add(new OrderItem(productService.getProductById(id)));
         return true;
     }
-
-//    public boolean add(Long id) {
-//        for (OrderItem i : items) {
-//            if (i.getProduct().getId().equals(id)) {
-//                i.setQuantity(i.getQuantity() + 1);
-//                return true;
-//            }
-//        }
-//        items.add(new OrderItem(productService.getProductById(id)));
-//        return true;
-//    }
 
     public boolean del(Long id) {
         for (int i = 0; i < items.size(); i++) {

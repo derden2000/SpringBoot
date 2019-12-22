@@ -1,5 +1,6 @@
 package pro.antonshu.market.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @Table(name = "roles")
+@JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer"})
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,15 +13,14 @@ import pro.antonshu.market.entities.Category;
 import pro.antonshu.market.entities.Order;
 import pro.antonshu.market.entities.Product;
 import pro.antonshu.market.entities.User;
-import pro.antonshu.market.services.CategoryService;
-import pro.antonshu.market.services.OrderService;
-import pro.antonshu.market.services.ProductService;
-import pro.antonshu.market.services.UserService;
+import pro.antonshu.market.services.*;
 import pro.antonshu.market.utils.Basket;
 import pro.antonshu.market.utils.ProductFilter;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +31,8 @@ public class MainController {
     private CategoryService categoryService;
     private UserService userService;
     private OrderService orderService;
+    private OrderItemService orderItemService;
+    private BCryptPasswordEncoder passwordEncoder;
 
     private Basket basket;
 
@@ -54,6 +56,16 @@ public class MainController {
         this.orderService = orderService;
     }
 
+    @Autowired
+    public void setOrderItemService(OrderItemService orderItemService) {
+        this.orderItemService = orderItemService;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @PostConstruct
     public void init() {
         this.basket = new Basket(productService);
@@ -63,6 +75,21 @@ public class MainController {
     public String index(Model model) {
         model.addAttribute(basket);
         return "index";
+    }
+
+    @GetMapping("/register")
+    public String getRegPage(Model model) {
+        User user_new = new User();
+        model.addAttribute("user", user_new);
+        model.addAttribute(basket);
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String regNewUser(Model model, @ModelAttribute(name = "user") @Valid User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.regNewUser(user);
+        return "redirect:products";
     }
 
     @GetMapping("/products")
@@ -175,15 +202,25 @@ public class MainController {
         User user = userService.findByPhone(principal.getName());
         model.addAttribute("user", user);
         model.addAttribute(basket);
-        model.addAttribute("order", new Order(user, basket));
         return "order";
     }
 
     @PostMapping("/order_do")
-    public String orderDone(@ModelAttribute(name = "order") Order order) {
-//        model.addAttribute("order", order);
-        System.out.println("Order saved: " + order);
+    public String orderDone(@RequestParam(name = "address") String address, Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/";
+        }
+        User user = userService.findByPhone(principal.getName());
+        model.addAttribute("user", user);
+        model.addAttribute(basket);
+        Order order = new Order(user, basket);
+        order.setDate(new Date());
+        order.setAddress(address);
+        order.setItems(basket.getContent());
         orderService.saveOrder(order);
+        model.addAttribute("order", order);
+        orderItemService.saveOrderItemList(basket.getContent(), order);
+        basket.clear();
         return "order_do";
     }
 
@@ -195,6 +232,9 @@ public class MainController {
         User user = userService.findByPhone(principal.getName());
         model.addAttribute("user", user);
         model.addAttribute(basket);
+        List<Order> orderList = orderService.findAllOrdersByUserId(2L);
+        System.out.println("orderList: " + orderList);
+        model.addAttribute("orders_list", orderList);
         return "profile";
     }
 
@@ -211,6 +251,12 @@ public class MainController {
     public String saveItem(@ModelAttribute(name = "product") Product product) {
         productService.saveProduct(product);
         return "redirect:/products";
+    }
+
+    @GetMapping("/payments")
+    public String getPaymentsPage(Model model) {
+        model.addAttribute(basket);
+        return "payments";
     }
 
     private void createContent(Page<Product> page, Model model) {

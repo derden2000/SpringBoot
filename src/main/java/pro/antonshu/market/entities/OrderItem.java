@@ -2,14 +2,16 @@ package pro.antonshu.market.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "order_items")
+@Table(name = "orders_items")
 @NoArgsConstructor
 @Data
+@ToString(exclude = {"order"})
 public class OrderItem {
 
     @Id
