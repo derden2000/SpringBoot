@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8"/>
@@ -19,7 +19,35 @@
     <h1>Профиль</h1>
 
     <h5 th:text="'Name: ' + ${user.firstName} + ' ' + ${user.lastName}" />
-    <h5 th:text="'Phone: ' + ${user.phone}" />
+    <h5 th:text="'Phone: ' + ${user.phone}" /><br>
+
+
+    <h6 th:if="${orders_list.size() > 0}">Ваши заказы:</h6>
+
+    <div th:if="${orders_list.size() > 0}" class="panel panel-default">
+        <div class="panel-heading">Список заказов</div>
+
+        <table class="table" th:if="${orders_list.size() > 0}">
+            <thead>
+            <tr style="font-weight: bold;">
+                <td>ID</td>
+                <td>Date</td>
+                <td>Сумма</td>
+                <td>Статус</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ol : ${orders_list}">
+                <td th:text="${ol.id}"/>
+                <td>
+                    <span th:text="${ol.date}"/>
+                </td>
+                <td th:text="${ol.amount}"/>
+                <td th:text="${ol.completeStatus} ? 'Выполнен' : 'Не выполнен'"/>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 </body>

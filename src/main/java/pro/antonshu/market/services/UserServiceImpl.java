@@ -65,4 +65,9 @@ public class UserServiceImpl implements UserService {
         userRepository.findAll().forEach(list::add);
         return list;
     }
+
+    @Override
+    public User regNewUser(User user) {
+        return userRepository.save(user);
+    }
 }

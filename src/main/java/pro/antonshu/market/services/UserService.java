@@ -12,4 +12,6 @@ public interface UserService extends UserDetailsService {
     boolean isUserExist(String phone);
 
     List<User> getAllUsers();
+
+    User regNewUser(User user);
 }

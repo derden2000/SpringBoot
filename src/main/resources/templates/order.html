@@ -21,6 +21,44 @@
     <h5 th:text="'Сумма заказа: ' + ${basket.getTotalCost()}"/><br>
     <h5 th:text="'Name: ' + ${user.firstName} + ' ' + ${user.lastName}"/>
     <h5 th:text="'Phone: ' + ${user.phone}"/>
+
+
+    <table class="table" th:if="${basket.size() > 0}">
+        <thead>
+        <tr style="font-weight: bold;">
+            <td>ID</td>
+            <td>Title</td>
+            <td>Price</td>
+            <td>Quantity</td>
+            <td>Cost</td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="element : ${basket.getContent()}">
+            <td th:text="${element.product.id}"/>
+            <td>
+                <span style="font-weight: bold" th:text="${element.product.title}"/>
+                <br>
+                <span th:text="'Категория: ' + ${element.product.category.title}"/>
+            </td>
+            <td th:text="${element.price}"/>
+            <td th:text="${element.quantity}"/>
+            <td th:text="${element.getItemAmount()}"/>
+            <td></td>
+        </tr>
+        </tbody>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td th:text="'Сумма: ' + ${basket.getTotalCost()}"/>
+        <td></td>
+    </table>
+    <form th:action="@{/order_do}" method="post">
+        <input type="text" name="address" placeholder="Введите адрес доставки">
+        <button class="btn btn-primary" type="submit">Оформить</button>
+    </form>
 </div>
 
 </body>
