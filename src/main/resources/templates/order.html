@@ -56,9 +56,6 @@
         <td></td>
     </table>
     <form th:action="@{/order_do}" method="post">
-<!--        <input type="hidden" name="order_id" th:value="${order.id}">-->
-       <!-- <input type="hidden" th:field="*{items}" th:value="${basket.getContent()}">
-        <input type="hidden" th:field="*{amount}" th:value="${basket.getTotalCost()}">-->
         <input type="text" name="address" placeholder="Введите адрес доставки">
         <button class="btn btn-primary" type="submit">Оформить</button>
     </form>

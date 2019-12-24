@@ -232,7 +232,7 @@ public class MainController {
         User user = userService.findByPhone(principal.getName());
         model.addAttribute("user", user);
         model.addAttribute(basket);
-        List<Order> orderList = orderService.findAllOrdersByUserId(2L);
+        List<Order> orderList = orderService.findAllOrdersByUserId(user.getId());
         System.out.println("orderList: " + orderList);
         model.addAttribute("orders_list", orderList);
         return "profile";
