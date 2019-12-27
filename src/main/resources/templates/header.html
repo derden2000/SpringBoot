@@ -37,29 +37,49 @@
                 <li sec:authorize="isAnonymous()" class="nav-item" th:classappend="${activeTab == 'Reg' ? 'active' : ''}">
                     <a class="nav-link" th:href="@{/register}">Регистрация</a>
                 </li>
-
-                <li sec:authorize="isAuthenticated()" class="nav-item">
-                    <form th:action="@{/logout}" method="POST">
-                        <button id="navLogout" class="btn btn-outline-secondary" type="submit">Log Out</button>
-                    </form>
-                </li>
-
-                <li sec:authorize="isAnonymous()" class="nav-item">
-                    <form class="align-middle" th:action="@{/auth}" method="POST">
-                        <div class="input-group-prepend">
-                            <input id="navLoginField" class="form-control" type="text" placeholder="Phone"
-                                   name="username"
-                                   aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
-                            <input id="navPasswordField" class="form-control" type="password" placeholder="Password"
-                                   name="password"
-                                   aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
-                            <button id="navLoginSubmit" class="btn btn-outline-warning btn-sm"
-                                    style="margin-left: 10px;" type="submit">Log In
-                            </button>
-                        </div>
-                    </form>
-                </li>
             </ul>
         </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown nav-link">
+                <a href="#" class="dropdown-toggle navbar-text" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
+                <ul id="login-dp" class="dropdown-menu">
+                    <li>
+                        <div class="row">
+                            <div class="col-md-12">
+                                Login via
+                                <div class="social-buttons">
+                                    <a href="#" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
+                                    <a href="#" class="btn btn-tw"><i class="fa fa-twitter"></i> Twitter</a>
+                                    <a href="#" class="btn btn-ins"><i class="fa fa-instagram"></i> Instagram</a>
+                                </div>
+                                or
+                                <form class="form" role="form" method="post" th:action="@{/auth}" accept-charset="UTF-8" id="login-nav">
+                                    <div class="form-group">
+                                        <label class="sr-only" for="exampleInputEmail2">Email address</label>
+                                        <input type="phone" class="form-control" id="exampleInputEmail2" placeholder="Phone" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="sr-only" for="exampleInputPassword2">Password</label>
+                                        <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" required>
+                                        <div class="help-block text-right"><a href="">Forget the password ?</a></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox"> keep me logged-in
+                                        </label>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="bottom text-center">
+                                New here ? <a href="#"><b>Join Us</b></a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </nav>
 </div>

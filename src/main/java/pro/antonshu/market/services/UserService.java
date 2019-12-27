@@ -14,4 +14,6 @@ public interface UserService extends UserDetailsService {
     List<User> getAllUsers();
 
     User regNewUser(User user);
+
+    User save(User user);
 }

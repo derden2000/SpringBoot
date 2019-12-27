@@ -11,13 +11,17 @@
 
     <link rel="icon" type="image/png" th:href="@{/favicon.ico}"/>
 
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link th:href="@{/css/bootstrap-social.css}" type="text/css" rel="stylesheet" />
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-<div>
+<div align="center">
     <div id="loginbox" style="margin-top: 50px;" class="mainbox col-md-3 col-md-offset-2 col-sm-6 col-sm-offset-2">
         <div class="panel panel-info">
             <div class="panel-heading">
@@ -55,6 +59,18 @@
                         </div>
                     </div>
                 </form>
+            </div>
+            <div align="center">
+                <h4 class="heading-desc">or</h4>
+                <a th:href="@{/login/google}" title="Google" class="btn btn-block btn-social btn-lg btn-google">
+                    <i class="fa fa-google"></i> Sign in with Google
+                </a>
+                <a href="/account/provider/facebook" title="Facebook" class="btn btn-block btn-social btn-lg btn-facebook">
+                    <i class="fa fa-facebook"></i> Sign in with Facebook
+                </a>
+                <a href="/account/provider/live" title="Vkontakte" class="btn btn-block btn-social btn-lg btn-vk">
+                    <i class="fa fa-vk"></i> Sign in with Vkontakte
+                </a>
             </div>
         </div>
     </div>
