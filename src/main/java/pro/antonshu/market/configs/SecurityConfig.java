@@ -18,10 +18,17 @@ import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticat
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
-import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pro.antonshu.market.services.CustomUserInfoTokenServices;
+import org.springframework.web.filter.CompositeFilter;
+import pro.antonshu.market.services.GoogleUserInfoTokenServices;
+import pro.antonshu.market.services.FacebookUserInfoTokenServices;
 import pro.antonshu.market.services.UserService;
+import pro.antonshu.market.services.VkUserInfoTokenServices;
+
+
+import javax.servlet.Filter;
+import java.util.ArrayList;
+import java.util.List;
 
 @EnableOAuth2Client
 @Configuration
@@ -78,25 +85,51 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public FilterRegistrationBean oAuth2ClientFilterRegistration(OAuth2ClientContextFilter oAuth2ClientContextFilter)
-    {
+    public FilterRegistrationBean oAuth2ClientFilterRegistration(OAuth2ClientContextFilter oAuth2ClientContextFilter) {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(oAuth2ClientContextFilter);
         registration.setOrder(-100);
         return registration;
     }
 
-    private OAuth2ClientAuthenticationProcessingFilter ssoFilter()
-    {
+    private Filter ssoFilter() {
+
+        CompositeFilter filter = new CompositeFilter();
+        List<Filter> filters = new ArrayList<>();
+
         OAuth2ClientAuthenticationProcessingFilter googleFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/google");
         OAuth2RestTemplate googleTemplate = new OAuth2RestTemplate(google(), oAuth2ClientContext);
         googleFilter.setRestTemplate(googleTemplate);
-        CustomUserInfoTokenServices tokenServices = new CustomUserInfoTokenServices(googleResource().getUserInfoUri(), google().getClientId());
+        GoogleUserInfoTokenServices tokenServices = new GoogleUserInfoTokenServices(googleResource().getUserInfoUri(), google().getClientId());
         tokenServices.setRestTemplate(googleTemplate);
         googleFilter.setTokenServices(tokenServices);
         tokenServices.setUserService(userService);
         tokenServices.setPasswordEncoder(passwordEncoder());
-        return googleFilter;
+        filters.add(googleFilter);
+
+        OAuth2ClientAuthenticationProcessingFilter facebookFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/facebook");
+        OAuth2RestTemplate facebookTemplate = new OAuth2RestTemplate(facebook(), oAuth2ClientContext);
+        facebookFilter.setRestTemplate(facebookTemplate);
+        FacebookUserInfoTokenServices fbTokenServices = new FacebookUserInfoTokenServices(facebookResource().getUserInfoUri(), facebook().getClientId());
+        fbTokenServices.setRestTemplate(facebookTemplate);
+        facebookFilter.setTokenServices(fbTokenServices);
+        fbTokenServices.setUserService(userService);
+        fbTokenServices.setPasswordEncoder(passwordEncoder());
+        filters.add(facebookFilter);
+
+        OAuth2ClientAuthenticationProcessingFilter vkFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/vk");
+        OAuth2RestTemplate vkTemplate = new OAuth2RestTemplate(vkontakte(), oAuth2ClientContext);
+        vkFilter.setRestTemplate(vkTemplate);
+        VkUserInfoTokenServices vkTokenServices = new VkUserInfoTokenServices(vkResource().getUserInfoUri(), vkontakte().getClientId());
+        vkTokenServices.setRestTemplate(vkTemplate);
+        vkFilter.setTokenServices(vkTokenServices);
+        vkTokenServices.setUserService(userService);
+        vkTokenServices.setPasswordEncoder(passwordEncoder());
+        filters.add(vkFilter);
+
+        filter.setFilters(filters);
+
+        return filter;
     }
 
     @Bean
@@ -107,9 +140,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    @ConfigurationProperties("facebook.client")
+    public AuthorizationCodeResourceDetails facebook() {
+        return new AuthorizationCodeResourceDetails();
+    }
+
+    @Bean
+    @ConfigurationProperties("vkontakte.client")
+    public AuthorizationCodeResourceDetails vkontakte()
+    {
+        return new AuthorizationCodeResourceDetails();
+    }
+
+    @Bean
     @ConfigurationProperties("google.resource")
     public ResourceServerProperties googleResource()
     {
         return new ResourceServerProperties();
     }
+
+    @Bean
+    @ConfigurationProperties("facebook.resource")
+    public ResourceServerProperties facebookResource() {
+        return new ResourceServerProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties("vkontakte.resource")
+    public ResourceServerProperties vkResource() {
+        return new ResourceServerProperties();
+    }
+
 }

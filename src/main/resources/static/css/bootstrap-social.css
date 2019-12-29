@@ -185,14 +185,14 @@
 .btn-tw:hover{
     color: #fff;
     background-color:#59b5fa;
-}.btn-ins{
+/*}.btn-google{
     color: #fff;
     background-color:#f40202;
 }
-.btn-ins:hover{
+.btn-google:hover{
     color: #fff;
     background-color:#ee5454;
-}
+}*/
 @media(max-width:768px){
     #login-dp{
         background-color: inherit;

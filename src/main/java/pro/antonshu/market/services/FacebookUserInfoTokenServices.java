@@ -2,8 +2,10 @@ package pro.antonshu.market.services;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.*;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedAuthoritiesExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedPrincipalExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,12 +20,11 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.util.Assert;
-import pro.antonshu.market.entities.Role;
 import pro.antonshu.market.entities.User;
 
 import java.util.*;
 
-public class CustomUserInfoTokenServices implements ResourceServerTokenServices {
+public class FacebookUserInfoTokenServices implements ResourceServerTokenServices {
 
     protected final Log logger = LogFactory.getLog(this.getClass());
     private final String userInfoEndpointUrl;
@@ -44,7 +45,7 @@ public class CustomUserInfoTokenServices implements ResourceServerTokenServices 
         this.passwordEncoder = passwordEncoder;
     }
 
-    public CustomUserInfoTokenServices(String userInfoEndpointUrl, String clientId) {
+    public FacebookUserInfoTokenServices(String userInfoEndpointUrl, String clientId) {
         this.userInfoEndpointUrl = userInfoEndpointUrl;
         this.clientId = clientId;
     }
@@ -70,25 +71,27 @@ public class CustomUserInfoTokenServices implements ResourceServerTokenServices 
     public OAuth2Authentication loadAuthentication(String accessToken) throws AuthenticationException, InvalidTokenException {
         Map<String, Object> map = getMap(this.userInfoEndpointUrl, accessToken);
 
-        if(map.containsKey("sub"))
-        {
-            String googleName = (String) map.get("name");
-            String googleUsername = (String) map.get("email");
 
-            User user = userService.findByPhone(googleUsername);
+            String facebookFirstName = (String) map.get("first_name");
+            String facebookLastName = (String) map.get("last_name");
+            String facebookUserMail = (String) map.get("email");
+            String facebookUserId = (String) map.get("id");
+        System.out.println("facebookUserId: " + facebookUserId + "; facebookName - " + facebookFirstName + " " + facebookLastName);
+
+            User user = userService.findByPhone(facebookUserId);
 
             if(user == null) {
                 user = new User();
             }
 
-            user.setPhone(googleUsername);
-            user.setLastName(googleName);
-            user.setFirstName(googleName);
-            user.setEmail(googleUsername);
+            user.setPhone(facebookUserId);
+            user.setLastName(facebookFirstName);
+            user.setFirstName(facebookLastName);
+            user.setEmail(facebookUserMail);
             user.setPassword(passwordEncoder.encode("oauth2user"));
 
             userService.regNewUser(user);
-        }
+
 
         if (map.containsKey("error"))
         {

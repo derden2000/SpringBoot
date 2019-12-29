@@ -37,9 +37,14 @@
                 <li sec:authorize="isAnonymous()" class="nav-item" th:classappend="${activeTab == 'Reg' ? 'active' : ''}">
                     <a class="nav-link" th:href="@{/register}">Регистрация</a>
                 </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <form th:action="@{/logout}" method="POST">
+                        <button id="navLogout" class="btn btn-outline-secondary" type="submit">Log Out</button>
+                    </form>
+                </li>
             </ul>
         </div>
-        <ul class="nav navbar-nav navbar-right">
+        <ul sec:authorize="isAnonymous()"  class="nav navbar-nav navbar-right">
             <li class="dropdown nav-link">
                 <a href="#" class="dropdown-toggle navbar-text" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
                 <ul id="login-dp" class="dropdown-menu">
@@ -50,7 +55,7 @@
                                 <div class="social-buttons">
                                     <a href="#" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
                                     <a href="#" class="btn btn-tw"><i class="fa fa-twitter"></i> Twitter</a>
-                                    <a href="#" class="btn btn-ins"><i class="fa fa-instagram"></i> Instagram</a>
+                                    <a href="#" class="btn btn-google"><i class="fa fa-google"></i> Google</a>
                                 </div>
                                 or
                                 <form class="form" role="form" method="post" th:action="@{/auth}" accept-charset="UTF-8" id="login-nav">
@@ -74,7 +79,7 @@
                                 </form>
                             </div>
                             <div class="bottom text-center">
-                                New here ? <a href="#"><b>Join Us</b></a>
+                                New here ? <a th:href="@{/register}"><b>Join Us</b></a>
                             </div>
                         </div>
                     </li>
