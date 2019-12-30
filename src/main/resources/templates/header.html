@@ -53,9 +53,10 @@
                             <div class="col-md-12">
                                 Login via
                                 <div class="social-buttons">
-                                    <a href="#" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
-                                    <a href="#" class="btn btn-tw"><i class="fa fa-twitter"></i> Twitter</a>
-                                    <a href="#" class="btn btn-google"><i class="fa fa-google"></i> Google</a>
+                                    <a th:href="@{/login/facebook}" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
+                                    <a th:href="@{/login/vk}" class="btn btn-vk"><i class="fa fa-vk"></i> Vkontakte</a>
+                                    <a th:href="@{/login/google}" class="btn btn-google"><i class="fa fa-google"></i> Google</a>
+                                    <a th:href="@{/login/yandex}" class="btn btn-yahoo"><i class="fa fa-yahoo"></i> Yandex</a>
                                 </div>
                                 or
                                 <form class="form" role="form" method="post" th:action="@{/auth}" accept-charset="UTF-8" id="login-nav">

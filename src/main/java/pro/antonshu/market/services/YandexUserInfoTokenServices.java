@@ -2,8 +2,10 @@ package pro.antonshu.market.services;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.*;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedAuthoritiesExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedPrincipalExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,12 +20,11 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.util.Assert;
-import pro.antonshu.market.entities.Role;
 import pro.antonshu.market.entities.User;
 
 import java.util.*;
 
-public class GoogleUserInfoTokenServices implements ResourceServerTokenServices {
+public class YandexUserInfoTokenServices implements ResourceServerTokenServices {
 
     protected final Log logger = LogFactory.getLog(this.getClass());
     private final String userInfoEndpointUrl;
@@ -44,7 +45,7 @@ public class GoogleUserInfoTokenServices implements ResourceServerTokenServices 
         this.passwordEncoder = passwordEncoder;
     }
 
-    public GoogleUserInfoTokenServices(String userInfoEndpointUrl, String clientId) {
+    public YandexUserInfoTokenServices(String userInfoEndpointUrl, String clientId) {
         this.userInfoEndpointUrl = userInfoEndpointUrl;
         this.clientId = clientId;
     }
@@ -69,33 +70,31 @@ public class GoogleUserInfoTokenServices implements ResourceServerTokenServices 
 
     public OAuth2Authentication loadAuthentication(String accessToken) throws AuthenticationException, InvalidTokenException {
         Map<String, Object> map = getMap(this.userInfoEndpointUrl, accessToken);
-        map.forEach((k,v) -> System.out.println(k + " - " + v));
+        map.forEach((k, v) -> System.out.println(k + " - " + v));
 
-        if(map.containsKey("sub"))
-        {
-            String firstName = (String) map.get("given_name");
-            String lastName = (String) map.get("family_name");
-            String email = (String) map.get("email");
-            String name = (String) map.get("name");
-//            String name = (String) map.get("name");
 
-            User user = userService.findByPhone(name);
+        String firstName = (String) map.get("first_name");
+        String lastName = (String) map.get("last_name");
+        String phone = (String) map.get("display_name");
+        List<String> emails = new ArrayList<>((List) map.get("emails"));
+        String userMail = emails.get(0);
 
-            if(user == null) {
-                user = new User();
-            }
+        User user = userService.findByPhone(phone);
 
-            user.setPhone(name);
-            user.setLastName(lastName);
-            user.setFirstName(firstName);
-            user.setEmail(email);
-            user.setPassword(passwordEncoder.encode("oauth2user"));
-
-            userService.regNewUser(user);
+        if (user == null) {
+            user = new User();
         }
 
-        if (map.containsKey("error"))
-        {
+        user.setPhone(phone);
+        user.setLastName(lastName);
+        user.setFirstName(firstName);
+        user.setEmail(userMail);
+        user.setPassword(passwordEncoder.encode("oauth2user"));
+
+        userService.regNewUser(user);
+
+
+        if (map.containsKey("error")) {
             this.logger.debug("userinfo returned error: " + map.get("error"));
             throw new InvalidTokenException(accessToken);
         }
@@ -105,7 +104,7 @@ public class GoogleUserInfoTokenServices implements ResourceServerTokenServices 
     private OAuth2Authentication extractAuthentication(Map<String, Object> map) {
         Object principal = this.getPrincipal(map);
         List<GrantedAuthority> authorities = this.authoritiesExtractor.extractAuthorities(map);
-        OAuth2Request request = new OAuth2Request((Map)null, this.clientId, (Collection)null, true, (Set)null, (Set)null, (String)null, (Set)null, (Map)null);
+        OAuth2Request request = new OAuth2Request((Map) null, this.clientId, (Collection) null, true, (Set) null, (Set) null, (String) null, (Set) null, (Map) null);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, "N/A", authorities);
         token.setDetails(map);
         return new OAuth2Authentication(request, token);
@@ -133,14 +132,15 @@ public class GoogleUserInfoTokenServices implements ResourceServerTokenServices 
                 restTemplate = new OAuth2RestTemplate(resource);
             }
 
-            OAuth2AccessToken existingToken = ((OAuth2RestOperations)restTemplate).getOAuth2ClientContext().getAccessToken();
+            OAuth2AccessToken existingToken = ((OAuth2RestOperations) restTemplate).getOAuth2ClientContext().getAccessToken();
             if (existingToken == null || !accessToken.equals(existingToken.getValue())) {
                 DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken(accessToken);
                 token.setTokenType(this.tokenType);
-                ((OAuth2RestOperations)restTemplate).getOAuth2ClientContext().setAccessToken(token);
+                ((OAuth2RestOperations) restTemplate).getOAuth2ClientContext().setAccessToken(token);
             }
 
-            return (Map)((OAuth2RestOperations)restTemplate).getForEntity(path, Map.class, new Object[0]).getBody();
+            return (Map) ((OAuth2RestOperations) restTemplate).getForEntity(path, Map.class, new Object[0]).getBody();
+
         } catch (Exception var6) {
             this.logger.warn("Could not fetch user details: " + var6.getClass() + ", " + var6.getMessage());
             return Collections.singletonMap("error", "Could not fetch user details");

@@ -20,11 +20,7 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CompositeFilter;
-import pro.antonshu.market.services.GoogleUserInfoTokenServices;
-import pro.antonshu.market.services.FacebookUserInfoTokenServices;
-import pro.antonshu.market.services.UserService;
-import pro.antonshu.market.services.VkUserInfoTokenServices;
-
+import pro.antonshu.market.services.*;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -127,6 +123,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         vkTokenServices.setPasswordEncoder(passwordEncoder());
         filters.add(vkFilter);
 
+        OAuth2ClientAuthenticationProcessingFilter yaFilter = new OAuth2ClientAuthenticationProcessingFilter("/login/yandex");
+        OAuth2RestTemplate yaTemplate = new OAuth2RestTemplate(yandex(), oAuth2ClientContext);
+        yaFilter.setRestTemplate(yaTemplate);
+        YandexUserInfoTokenServices yaTokenServices = new YandexUserInfoTokenServices(yaResource().getUserInfoUri(), yandex().getClientId());
+        yaTokenServices.setRestTemplate(yaTemplate);
+        yaFilter.setTokenServices(yaTokenServices);
+        yaTokenServices.setUserService(userService);
+        yaTokenServices.setPasswordEncoder(passwordEncoder());
+        filters.add(yaFilter);
+
         filter.setFilters(filters);
 
         return filter;
@@ -134,8 +140,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     @ConfigurationProperties("google.client")
-    public AuthorizationCodeResourceDetails google()
-    {
+    public AuthorizationCodeResourceDetails google() {
         return new AuthorizationCodeResourceDetails();
     }
 
@@ -147,15 +152,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     @ConfigurationProperties("vkontakte.client")
-    public AuthorizationCodeResourceDetails vkontakte()
-    {
+    public AuthorizationCodeResourceDetails vkontakte() {
+        return new AuthorizationCodeResourceDetails();
+    }
+
+    @Bean
+    @ConfigurationProperties("yandex.client")
+    public AuthorizationCodeResourceDetails yandex() {
         return new AuthorizationCodeResourceDetails();
     }
 
     @Bean
     @ConfigurationProperties("google.resource")
-    public ResourceServerProperties googleResource()
-    {
+    public ResourceServerProperties googleResource() {
         return new ResourceServerProperties();
     }
 
@@ -168,6 +177,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @ConfigurationProperties("vkontakte.resource")
     public ResourceServerProperties vkResource() {
+        return new ResourceServerProperties();
+    }
+
+    @Bean
+    @ConfigurationProperties("yandex.resource")
+    public ResourceServerProperties yaResource() {
         return new ResourceServerProperties();
     }
 

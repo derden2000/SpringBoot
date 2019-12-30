@@ -85,8 +85,8 @@ public class FacebookUserInfoTokenServices implements ResourceServerTokenService
             }
 
             user.setPhone(facebookUserId);
-            user.setLastName(facebookFirstName);
-            user.setFirstName(facebookLastName);
+            user.setLastName(facebookLastName);
+            user.setFirstName(facebookFirstName);
             user.setEmail(facebookUserMail);
             user.setPassword(passwordEncoder.encode("oauth2user"));
 

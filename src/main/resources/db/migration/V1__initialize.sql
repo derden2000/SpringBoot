@@ -33,11 +33,12 @@ drop table IF exists products cascade;
 drop table IF exists users;
 create table users (
   id                    bigserial,
-  phone                 VARCHAR(30) NOT NULL UNIQUE,
+  phone                 VARCHAR(30) NOT NULL,
   password              VARCHAR(80),
-  email                 VARCHAR(50) UNIQUE,
+  email                 VARCHAR(50),
   first_name            VARCHAR(50),
   last_name             VARCHAR(50),
+  UNIQUE (phone, email),
   PRIMARY KEY (id)
 );
 
