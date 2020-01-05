@@ -6,6 +6,7 @@ import pro.antonshu.market.entities.Order;
 import pro.antonshu.market.repositories.OrderRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -27,5 +28,12 @@ public class OrderService {
 
     public List<Order> findAllOrdersByUserId(Long id) {
         return orderRepository.findAllByUserId(id);
+    }
+
+    public Order setOrderPaymentStatusTrue(Long id) {
+        Order order = orderRepository.findById(id).get();
+        order.setPaymentStatus(true);
+        orderRepository.save(order);
+        return order;
     }
 }

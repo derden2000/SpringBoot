@@ -26,7 +26,8 @@
                     th:classappend="${activeTab == 'Profile' ? 'active' : ''}">
                     <a class="nav-link" th:href="@{/profile}">Профиль</a>
                 </li>
-                <li sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')" class="nav-item" th:classappend="${activeTab == 'Admin' ? 'active' : ''}">
+                <li sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')" class="nav-item"
+                    th:classappend="${activeTab == 'Admin' ? 'active' : ''}">
                     <a class="nav-link" th:href="@{/admin}">Панель управления</a>
                 </li>
                 <li class="nav-item" th:classappend="${activeTab == 'Cart' ? 'active' : ''}">
@@ -34,7 +35,8 @@
                                                                         class="badge badge-light"
                                                                         th:text="${basket.size()}"></span></a>
                 </li>
-                <li sec:authorize="isAnonymous()" class="nav-item" th:classappend="${activeTab == 'Reg' ? 'active' : ''}">
+                <li sec:authorize="isAnonymous()" class="nav-item"
+                    th:classappend="${activeTab == 'Reg' ? 'active' : ''}">
                     <a class="nav-link" th:href="@{/register}">Регистрация</a>
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item">
@@ -44,29 +46,36 @@
                 </li>
             </ul>
         </div>
-        <ul sec:authorize="isAnonymous()"  class="nav navbar-nav navbar-right">
+        <ul sec:authorize="isAnonymous()" class="nav navbar-nav navbar-right">
             <li class="dropdown nav-link">
-                <a href="#" class="dropdown-toggle navbar-text" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle navbar-text" data-toggle="dropdown"><b>Login</b> <span
+                        class="caret"></span></a>
                 <ul id="login-dp" class="dropdown-menu">
                     <li>
                         <div class="row">
                             <div class="col-md-12">
                                 Login via
                                 <div class="social-buttons">
-                                    <a th:href="@{/login/facebook}" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
+                                    <a th:href="@{/login/facebook}" class="btn btn-fb"><i class="fa fa-facebook"></i>
+                                        Facebook</a>
                                     <a th:href="@{/login/vk}" class="btn btn-vk"><i class="fa fa-vk"></i> Vkontakte</a>
-                                    <a th:href="@{/login/google}" class="btn btn-google"><i class="fa fa-google"></i> Google</a>
-                                    <a th:href="@{/login/yandex}" class="btn btn-yahoo"><i class="fa fa-yahoo"></i> Yandex</a>
+                                    <a th:href="@{/login/google}" class="btn btn-google"><i class="fa fa-google"></i>
+                                        Google</a>
+                                    <a th:href="@{/login/yandex}" class="btn btn-yahoo"><i class="fa fa-yahoo"></i>
+                                        Yandex</a>
                                 </div>
                                 or
-                                <form class="form" role="form" method="post" th:action="@{/auth}" accept-charset="UTF-8" id="login-nav">
+                                <form class="form" role="form" method="post" th:action="@{/auth}" accept-charset="UTF-8"
+                                      id="login-nav">
                                     <div class="form-group">
                                         <label class="sr-only" for="exampleInputEmail2">Email address</label>
-                                        <input type="phone" class="form-control" id="exampleInputEmail2" placeholder="Phone" required>
+                                        <input type="text" name="username" class="form-control" id="exampleInputEmail2"
+                                               placeholder="Phone" required>
                                     </div>
                                     <div class="form-group">
                                         <label class="sr-only" for="exampleInputPassword2">Password</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" required>
+                                        <input type="password" name="password" class="form-control"
+                                               id="exampleInputPassword2" placeholder="Password" required>
                                         <div class="help-block text-right"><a href="">Forget the password ?</a></div>
                                     </div>
                                     <div class="form-group">

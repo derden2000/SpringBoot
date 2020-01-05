@@ -9,6 +9,9 @@ insert into categories (title) values ('Standard'), ('Professional');
 drop table IF exists products cascade;
  create table products (id bigserial, title varchar(255), price bigint, description text, category bigint, primary key (id), constraint fk_cat_id foreign key (category) references categories (id));
   insert into products (title, price, category) values
+  ('Paypal Headphones 10', 10, 1),
+  ('Paypal Headphones 20', 20, 1),
+  ('JBL Headphones T450BT', 1080, 1),
   ('JBL Headphones T450BT', 1080, 1),
   ('Apple Airpods 2', 9250, 2),
   ('Sony WH1000-XM3', 18990, 1),
@@ -78,7 +81,7 @@ VALUES
 (2, 2);
 
 drop table if exists orders cascade;
-create table orders (id bigserial, order_date timestamp DEFAULT current_timestamp, user_id bigint, price numeric(8, 2), complete_status boolean default false, address text, primary key(id), constraint fk_user_id foreign key (user_id) references users (id));
+create table orders (id bigserial, order_date timestamp DEFAULT current_timestamp, user_id bigint, price numeric(8, 2), complete_status boolean default false, payment_status boolean default false, address text, primary key(id), constraint fk_user_id foreign key (user_id) references users (id));
 
 drop table if exists orders_items cascade;
 create table orders_items (id bigserial, order_id bigint, product_id bigint, quantity int, price numeric(8, 2), primary key(id), constraint fk_prod_id foreign key (product_id) references products (id), constraint fk_order_id foreign key (order_id) references orders (id));

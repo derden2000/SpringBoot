@@ -42,6 +42,9 @@ public class Order {
     @Column(name = "complete_status", columnDefinition = "boolean DEFAULT false")
     private boolean completeStatus;
 
+    @Column(name = "payment_status", columnDefinition = "boolean DEFAULT false")
+    private boolean paymentStatus;
+
     public Order(User user, Basket basket) {
         this.user = user;
         this.amount = BigDecimal.valueOf(basket.getTotalCost());

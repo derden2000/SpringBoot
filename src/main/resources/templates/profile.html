@@ -33,17 +33,32 @@
                 <td>ID</td>
                 <td>Date</td>
                 <td>Сумма</td>
-                <td>Статус</td>
+                <td>Статус оплаты</td>
+                <td>Статус доставки</td>
+                <td></td>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="ol : ${orders_list}">
-                <td th:text="${ol.id}"/>
+            <tr th:each="order : ${orders_list}">
+                <td th:text="${order.id}"/>
                 <td>
-                    <span th:text="${ol.date}"/>
+                    <span th:text="${order.date}"/>
                 </td>
-                <td th:text="${ol.amount}"/>
-                <td th:text="${ol.completeStatus} ? 'Выполнен' : 'Не выполнен'"/>
+                <td th:text="${order.amount}"/>
+                <td th:text="${order.paymentStatus} ? 'Оплачен' : 'Не оплачен'"/>
+                <td th:text="${order.completeStatus} ? 'Доставлен' : 'Не доставлен'"/>
+                <td>
+                    <div th:if="!${order.paymentStatus}">
+                        <form th:action="@{/paypal/authorize_payment}" method="post">
+                            <input type="hidden" name="orderId" th:value="${order.id}">
+                            <input type="hidden" name="subtotalPrice" th:value="${order.amount}">
+                            <input type="hidden" name="shippingPrice" th:value="500">
+                            <input type="hidden" name="taxPrice" th:value="(${order.amount}+500)*0.18">
+                            <input type="hidden" name="totalPrice" th:value="${order.amount} + 500">
+                            <button class="btn btn-success" type="submit">Оплатить картой онлайн</button>
+                        </form>
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>
