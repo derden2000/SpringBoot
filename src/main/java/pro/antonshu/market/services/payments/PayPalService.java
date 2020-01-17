@@ -3,14 +3,33 @@ package pro.antonshu.market.services.payments;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class PayPalService {
-    private static final String CLIENT_ID = "AXkOc7xUGBCQRV334XL551qGBzJC2WY5Qoxb4eR77dIQ1zezoKTf2kJ5EysOJpvOiAZJ70mOOTw04nLy";
-    private static final String CLIENT_SECRET = "EBzpN0e4t1x8Qmj06Zn0sAuDyr8TQWZAZNJOKroR1IEf8Gp5JovOBwn8GwjNLt7nXUoexMvE1ydzYPmN";
-    private static final String MODE = "sandbox";
+
+    private static String CLIENT_ID;
+    private static String CLIENT_SECRET;
+    private static String MODE;
+
+    @Value("${paypal.clientId}")
+    public void setClientId(String clientId) {
+        PayPalService.CLIENT_ID = clientId;
+    }
+
+    @Value("${paypal.clientSecret}")
+    public void setClientSecret(String clientSecret) {
+        CLIENT_SECRET = clientSecret;
+    }
+
+    @Value("${paypal.mode}")
+    public void setMODE(String MODE) {
+        PayPalService.MODE = MODE;
+    }
 
     public String authorizePayment(OrderDetail orderDetail) throws PayPalRESTException {
         Payer payer = getPayerInformation();

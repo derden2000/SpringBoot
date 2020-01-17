@@ -51,11 +51,11 @@
                     <div th:if="!${order.paymentStatus}">
                         <form th:action="@{/paypal/authorize_payment}" method="post">
                             <input type="hidden" name="orderId" th:value="${order.id}">
-                            <input type="hidden" name="subtotalPrice" th:value="${order.amount}">
-                            <input type="hidden" name="shippingPrice" th:value="500">
-                            <input type="hidden" name="taxPrice" th:value="(${order.amount}+500)*0.18">
-                            <input type="hidden" name="totalPrice" th:value="${order.amount} + 500">
-                            <button class="btn btn-success" type="submit">Оплатить картой онлайн</button>
+                            <input type="hidden" name="amount" th:value="${order.amount}">
+<!--                            <input type="hidden" name="shippingPrice" th:value="500/1.2">-->
+<!--                            <input type="hidden" name="taxPrice" th:value="((${order.amount}+500) - (${order.amount}+500)/1.2)">-->
+<!--                            <input type="hidden" name="totalPrice" th:value="${order.amount} + 500">-->
+                            <button class="btn btn-primary" type="submit">Оплатить картой онлайн</button>
                         </form>
                     </div>
                 </td>

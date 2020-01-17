@@ -24,7 +24,7 @@
                 </li>
                 <li sec:authorize="isAuthenticated()" class="nav-item"
                     th:classappend="${activeTab == 'Profile' ? 'active' : ''}">
-                    <a class="nav-link" th:href="@{/profile}">Профиль</a>
+                    <a class="nav-link" th:href="@{/profile}">Личный кабинет</a>
                 </li>
                 <li sec:authorize="hasAnyRole('ROLE_MANAGER', 'ROLE_ADMIN')" class="nav-item"
                     th:classappend="${activeTab == 'Admin' ? 'active' : ''}">

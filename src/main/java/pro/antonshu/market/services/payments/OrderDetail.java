@@ -1,19 +1,22 @@
 package pro.antonshu.market.services.payments;
 
+import java.text.DecimalFormat;
+
 public class OrderDetail {
 
-    private String orderId;
-    private float subtotal;
-    private float shipping;
-    private float tax;
-    private float total;
+    private Long orderId;
+    private String subtotal;
+    private String shipping;
+    private String tax;
+    private String total;
 
-    public OrderDetail(String orderId, String subtotal, String shipping, String tax, String total) {
+    public OrderDetail(Long orderId, String amount) {
         this.orderId = orderId;
-        this.subtotal = Float.parseFloat(subtotal);
-        this.shipping = Float.parseFloat(shipping);
-        this.tax = Float.parseFloat(tax);
-        this.total = Float.parseFloat(total);
+        this.subtotal = new DecimalFormat("0.00").format(Double.parseDouble(amount) / 1.2).replace(',', '.');
+        this.shipping = new DecimalFormat("0.00").format(500 / 1.2).replace(',', '.');
+        this.total = new DecimalFormat("0.00").format(Double.parseDouble(amount) + 500).replace(',', '.');
+        double tax = Double.parseDouble(total) - Double.parseDouble(subtotal) - Double.parseDouble(shipping);
+        this.tax = new DecimalFormat("0.00").format(tax).replace(',', '.');
     }
 
     public String getOrderId() {
@@ -21,18 +24,18 @@ public class OrderDetail {
     }
 
     public String getSubtotal() {
-        return String.format("%.2f", subtotal).replace(',', '.');
+        return subtotal;
     }
 
     public String getShipping() {
-        return String.format("%.2f", shipping).replace(',', '.');
+        return shipping;
     }
 
     public String getTax() {
-        return String.format("%.2f", tax).replace(',', '.');
+        return tax;
     }
 
     public String getTotal() {
-        return String.format("%.2f", tax + shipping + subtotal).replace(',', '.');
+        return total;
     }
 }

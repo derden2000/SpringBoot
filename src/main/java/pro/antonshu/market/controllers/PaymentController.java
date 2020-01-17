@@ -26,8 +26,9 @@ public class PaymentController {
     }
 
     @PostMapping("/paypal/authorize_payment")
-    private String doPayment(@RequestParam(name = "orderId") String orderId, @RequestParam(name = "subtotalPrice") String subtotal, @RequestParam(name = "shippingPrice") String shipping, @RequestParam(name = "taxPrice") String tax, @RequestParam(name = "totalPrice") String total) throws PayPalRESTException {
-        OrderDetail orderDetail = new OrderDetail(orderId, subtotal, shipping, tax, total);
+    private String executePayment(@RequestParam(name = "orderId") Long orderId,
+                                  @RequestParam(name = "amount") String amount) throws PayPalRESTException {
+        OrderDetail orderDetail = new OrderDetail(orderId, amount);
 
         PayPalService payPalService = new PayPalService();
         String approvalLink = payPalService.authorizePayment(orderDetail);
@@ -36,9 +37,8 @@ public class PaymentController {
     }
 
     @GetMapping("/paypalReturn")
-    private String getPaymentResult(@RequestParam(name = "paymentId") String paymentId, @RequestParam(name = "PayerID") String payerId, Model model) throws PayPalRESTException {
-        System.out.println("paymentId: " + paymentId);
-        System.out.println("PayerID: " + payerId);
+    private String getPaymentResult(@RequestParam(name = "paymentId") String paymentId,
+                                    @RequestParam(name = "PayerID") String payerId, Model model) throws PayPalRESTException {
 
         PayPalService payPalService = new PayPalService();
         Payment payment = payPalService.getPaymentDetails(paymentId);
@@ -58,10 +58,9 @@ public class PaymentController {
     }
 
     @PostMapping("/execute_payment")
-    private String doPayment(@RequestParam(name = "paymentId") String paymentId, @RequestParam(name = "PayerID") String payerId, @RequestParam(name = "OrderID") String orderId, Model model) throws PayPalRESTException {
-        System.out.println("Execute - paymentId: " + paymentId);
-        System.out.println("Execute - PayerID: " + payerId);
-        System.out.println("Execute - OrderID: " + orderId);
+    private String executePayment(@RequestParam(name = "paymentId") String paymentId,
+                                  @RequestParam(name = "PayerID") String payerId,
+                                  @RequestParam(name = "OrderID") String orderId, Model model) throws PayPalRESTException {
 
         PayPalService paymentServices = new PayPalService();
         Payment payment = paymentServices.executePayment(paymentId, payerId);
