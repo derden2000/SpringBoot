@@ -9,6 +9,9 @@ insert into categories (title) values ('Standard'), ('Professional');
 drop table IF exists products cascade;
  create table products (id bigserial, title varchar(255), price bigint, description text, category bigint, primary key (id), constraint fk_cat_id foreign key (category) references categories (id));
   insert into products (title, price, category) values
+  ('Paypal Headphones 10', 10, 1),
+  ('Paypal Headphones 20', 20, 1),
+  ('JBL Headphones T450BT', 1080, 1),
   ('JBL Headphones T450BT', 1080, 1),
   ('Apple Airpods 2', 9250, 2),
   ('Sony WH1000-XM3', 18990, 1),
@@ -33,11 +36,12 @@ drop table IF exists products cascade;
 drop table IF exists users;
 create table users (
   id                    bigserial,
-  phone                 VARCHAR(30) NOT NULL UNIQUE,
+  phone                 VARCHAR(30) NOT NULL,
   password              VARCHAR(80),
-  email                 VARCHAR(50) UNIQUE,
+  email                 VARCHAR(50),
   first_name            VARCHAR(50),
   last_name             VARCHAR(50),
+  UNIQUE (phone, email),
   PRIMARY KEY (id)
 );
 
@@ -65,8 +69,8 @@ VALUES
 
 INSERT INTO users (phone, password, first_name, last_name, email)
 VALUES
-('11111111','$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i','Admin','Admin','derden2000@mail.ru'),
-('22222222','$2y$10$knh2hFHVHAeHs4VwLBkkk.MfWAEDyb7UrmJKixcMdE4gaZ/iQirC2','Manager','Manager','anton.shoo@mail.ru');
+('11111111','$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i','Admin','Admin','111@111.ru'),
+('22222222','$2y$10$knh2hFHVHAeHs4VwLBkkk.MfWAEDyb7UrmJKixcMdE4gaZ/iQirC2','Manager','Manager','222@222.ru');
 
 INSERT INTO users_roles (user_id, role_id)
 VALUES
@@ -77,7 +81,7 @@ VALUES
 (2, 2);
 
 drop table if exists orders cascade;
-create table orders (id bigserial, order_date timestamp DEFAULT current_timestamp, user_id bigint, price numeric(8, 2), complete_status boolean default false, address text, primary key(id), constraint fk_user_id foreign key (user_id) references users (id));
+create table orders (id bigserial, order_date timestamp DEFAULT current_timestamp, user_id bigint, price numeric(8, 2), complete_status boolean default false, payment_status boolean default false, address text, primary key(id), constraint fk_user_id foreign key (user_id) references users (id));
 
 drop table if exists orders_items cascade;
 create table orders_items (id bigserial, order_id bigint, product_id bigint, quantity int, price numeric(8, 2), primary key(id), constraint fk_prod_id foreign key (product_id) references products (id), constraint fk_order_id foreign key (order_id) references orders (id));

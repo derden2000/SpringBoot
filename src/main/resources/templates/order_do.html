@@ -18,13 +18,20 @@
 
     <h1 th:text="'Заказ ' + ${order.id} + ' успешно оформлен'"></h1>
 
-    <h5 th:text="'Сумма заказа: ' + ${order.amount}"/><br>
+    <h5 th:text="'Сумма покупок: ' + ${order.amount}"/><br>
     <h5 th:text="'Name: ' + ${order.user.firstName} + ' ' + ${order.user.lastName}"/>
     <h5 th:text="'Phone: ' + ${order.user.phone}"/>
-    <h5 th:text="'Адрес доставки: ' + ${order.address}"/>
+    <h5 th:text="'Адрес доставки: ' + ${order.address}"/><br>
+    <h5 th:text="'Стоимость доставки: 500 руб.'"/><br>
+    <h5 th:text="'Сумма заказа: ' + ${order.amount} + 500 ' руб.'"/><br>
+    <h4></h4>
 
     <a th:href="@{/products}"><button class="btn btn-primary">Вернуться в каталог</button></a>
-    <a th:href="@{/payments}"><button class="btn btn-primary">Оплатить картой онлайн</button></a>
+    <form th:action="@{/paypal/authorize_payment}" method="post">
+        <input type="hidden" name="orderId" th:value="${order.id}">
+        <input type="hidden" name="amount" th:value="${order.amount}">
+        <button class="btn btn-primary" type="submit">Оплатить картой онлайн</button>
+    </form>
 </div>
 
 </body>

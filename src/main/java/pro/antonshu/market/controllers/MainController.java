@@ -77,21 +77,6 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping("/register")
-    public String getRegPage(Model model) {
-        User user_new = new User();
-        model.addAttribute("user", user_new);
-        model.addAttribute(basket);
-        return "register";
-    }
-
-    @PostMapping("/register")
-    public String regNewUser(Model model, @ModelAttribute(name = "user") @Valid User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.regNewUser(user);
-        return "redirect:products";
-    }
-
     @GetMapping("/products")
     public String getProducts(Model model, @RequestParam Map<String, String> params) {
 
@@ -189,10 +174,7 @@ public class MainController {
         return id;
     }
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
+
 
     @GetMapping("/order")
     public String orderPage(Model model, Principal principal) {
