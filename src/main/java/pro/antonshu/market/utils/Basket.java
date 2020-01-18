@@ -1,5 +1,7 @@
 package pro.antonshu.market.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -13,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
+/**
  *  Корзина представлена в виде Map c id товара и количесвом единиц товара в корзине.
  *  Key     - Long (id товара);
  *  Value   - Integer(кол-во единиц товара);
@@ -21,14 +23,20 @@ import java.util.Map;
 
 @Component
 @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+@DependsOn("ProductService")
 public class Basket {
 
     private ProductService productService;
     private List<OrderItem> items;
 
-    public Basket(ProductService productService) {
-        this.items = new ArrayList<>();
+    @Autowired
+    public void setProductService(ProductService productService) {
         this.productService = productService;
+    }
+
+    public Basket(/*ProductService productService*/) {
+        this.items = new ArrayList<>();
+//        this.productService = productService;
     }
 
     public void clear() {

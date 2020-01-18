@@ -116,7 +116,7 @@
             <tr th:each="pr : ${products}">
                 <td th:text="${pr.id}"/>
                 <td>
-                    <span style="font-weight: bold" th:text="${pr.title}"/>
+                    <a th:href="@{'/product/' + ${pr.id}}"><span style="font-weight: bold" th:text="${pr.title}"/></a>
                     <br>
                     <span th:text="'Категория: ' + ${pr.category.title}"/>
                 </td>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <title th:text="${product.title}"></title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script th:src="@{js/add.js}"></script>
+    <script th:src="@{js/del.js}"></script>
+</head>
+
+<body>
+
+<div class="container">
+    <div th:replace="~{header :: header(Catalog)}"/>
+
+    <h1>Описание товара</h1>
+
+    <div class="panel panel-default">
+        <div class="panel-heading" >Список отсортированных продуктов</div>
+
+        <table class="table">
+            <thead>
+            <tr style="font-weight: bold;">
+                <td>ID</td>
+                <td>Title</td>
+                <td>Price</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${product.id}"/>
+                <td>
+                    <span style="font-weight: bold" th:text="${product.title}"/>
+                    <br>
+                    <span th:text="'Категория: ' + ${product.category.title}"/>
+                </td>
+                <td th:text="${product.price}"/>
+                <td>
+                    <button type="button" th:data-num="${product.id}" th:data-price="${product.price}" th:data-quantity="1"
+                            class="btn btn-add btn-success" th:classappend="${basket.contains(product.id) ? 'd-none' : ''}">
+                        Добавить в корзину
+                    </button>
+                    <button type="button" th:data-num="${product.id}"
+                            class="btn btn-del btn-danger" th:classappend="${basket.contains(product.id) ? '' : 'd-none'}">
+                        Удалить из корзины
+                    </button>
+                    <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" th:href="@{'/edit/' + ${pr.id}}" class="btn btn-warning">Редактировать</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+</div>
+</body>
+</html>

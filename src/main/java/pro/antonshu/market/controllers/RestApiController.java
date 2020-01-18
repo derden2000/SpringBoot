@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
-public class RController {
+public class RestApiController {
 
     private ProductService productService;
 
