@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -52,23 +51,8 @@ public class ProductController {
                               @RequestParam Map<String, String> params,
                               @CookieValue(name = "userHistory", required = false) Cookie userHistoryCookie,
                               HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Cookie historyCookie = (Cookie) session.getAttribute("userHistory");
-        String input = historyCookie.getValue();
-        String[] income = input.split(",");
+        ReadHistoryCookies(model, request);
 
-        List<String> historyList = Arrays.asList(income);
-        System.out.println("received_Cookies: " + historyCookie.getName() + "=" + historyCookie.getValue());
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            Arrays.stream(cookies)
-                    .forEach(c -> System.out.println("All_Cookies: " + c.getName() + "=" + c.getValue()));
-        }
-
-        if (userHistoryCookie != null) {
-            System.out.println("Read userHistory Cookie: " + userHistoryCookie + "; Name: " + userHistoryCookie.getName() + "; Value: " + userHistoryCookie.getValue());
-        }
         int pageIndex = 1;
         if (params.containsKey("pageIndex")) {
             pageIndex = Integer.parseInt(params.get("pageIndex"));
@@ -100,20 +84,47 @@ public class ProductController {
                                      HttpServletRequest request,
                                      HttpServletResponse response,
                                      Principal principal, @PathVariable Long id) {
-        if (principal != null) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(principal.getName() + "-" + productService.getProductById(id).getId().toString());
-            Cookie historyCookie = new Cookie("userHistory", builder.toString());
-            historyCookie.setMaxAge(3600);
-            response.addCookie(historyCookie);
-            request.getSession().setAttribute("userHistory", historyCookie);
-
-            System.out.println("WriteCookie: " + historyCookie + "; Name: " + historyCookie.getName() + "; Value: " + historyCookie.getValue());
-        }
+        WriteHistoryCookie(request, id);
         Product product = productService.getProductById(id);
         model.addAttribute(product);
         model.addAttribute(basket);
         return "product";
+    }
+
+    private void WriteHistoryCookie(HttpServletRequest request, @PathVariable Long id) {
+        if (request.getSession().getAttribute("userHistory") != null) {
+            Cookie historyCookie = (Cookie) request.getSession().getAttribute("userHistory");
+            String[] visitedProducts = new StringBuilder(historyCookie.getValue()).toString().split("--");
+            StringBuilder builder = new StringBuilder();
+            if (visitedProducts.length > 4) {
+                for (int i = 1; i < visitedProducts.length; i++) {
+                    builder.append(visitedProducts[i]).append("--");
+                }
+                builder.append(productService.getProductById(id).getTitle());
+            } else {
+                for (int i = 0; i < visitedProducts.length; i++) {
+                    builder.append(visitedProducts[i]).append("--");
+                }
+                builder.append(productService.getProductById(id).getTitle());
+            }
+            historyCookie.setValue(builder.toString());
+            request.getSession().setAttribute("userHistory", historyCookie);
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append(productService.getProductById(id).getTitle());
+            Cookie historyCookie = new Cookie("history", builder.toString());
+            request.getSession().setAttribute("userHistory", historyCookie);
+        }
+    }
+
+    private void ReadHistoryCookies(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        if (session.getAttribute("userHistory") != null) {
+            Cookie historyCookie = (Cookie) session.getAttribute("userHistory");
+            String input = historyCookie.getValue();
+            String[] income = input.split("--");
+            model.addAttribute("pageHistory", income);
+        }
     }
 
     private void createContent(Page<Product> page, Model model) {

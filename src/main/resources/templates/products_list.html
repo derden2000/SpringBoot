@@ -137,6 +137,19 @@
         </table>
     </div>
     <br>
+    <table class="table" th:if="${pageHistory != null}">
+        <thead>
+        <tr style="font-weight: bold;">
+            <td>Просмотренные товары</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="pr : ${pageHistory}">
+            <td th:text="${pr}"/>
+        </tr>
+        </tbody>
+    </table>
+    <br>
     <span th:text="'Total items count (filtered): ' + ${productsCount} +' / '"/>
     <span th:text="'Total pages (filtered): ' + ${pagesCount}"/>
     <br>
