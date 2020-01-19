@@ -67,7 +67,7 @@
                             class="btn btn-del btn-danger" th:classappend="${basket.contains(product.id) ? '' : 'd-none'}">
                         Удалить из корзины
                     </button>
-                    <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" th:href="@{'/edit/' + ${pr.id}}" class="btn btn-warning">Редактировать</a>
+                    <a sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')" th:href="@{'/edit/' + ${product.id}}" class="btn btn-warning">Редактировать</a>
                 </td>
             </tr>
             </tbody>

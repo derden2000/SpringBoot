@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,13 @@ import pro.antonshu.market.services.ProductService;
 import pro.antonshu.market.utils.Basket;
 import pro.antonshu.market.utils.ProductFilter;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -40,8 +48,27 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public String getProducts(Model model, @RequestParam Map<String, String> params) {
+    public String getProducts(Model model,
+                              @RequestParam Map<String, String> params,
+                              @CookieValue(name = "userHistory", required = false) Cookie userHistoryCookie,
+                              HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Cookie historyCookie = (Cookie) session.getAttribute("userHistory");
+        String input = historyCookie.getValue();
+        String[] income = input.split(",");
 
+        List<String> historyList = Arrays.asList(income);
+        System.out.println("received_Cookies: " + historyCookie.getName() + "=" + historyCookie.getValue());
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            Arrays.stream(cookies)
+                    .forEach(c -> System.out.println("All_Cookies: " + c.getName() + "=" + c.getValue()));
+        }
+
+        if (userHistoryCookie != null) {
+            System.out.println("Read userHistory Cookie: " + userHistoryCookie + "; Name: " + userHistoryCookie.getName() + "; Value: " + userHistoryCookie.getValue());
+        }
         int pageIndex = 1;
         if (params.containsKey("pageIndex")) {
             pageIndex = Integer.parseInt(params.get("pageIndex"));
@@ -69,7 +96,20 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    private String getCurrentProduct(Model model, @PathVariable Long id) {
+    private String getCurrentProduct(Model model,
+                                     HttpServletRequest request,
+                                     HttpServletResponse response,
+                                     Principal principal, @PathVariable Long id) {
+        if (principal != null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(principal.getName() + "-" + productService.getProductById(id).getId().toString());
+            Cookie historyCookie = new Cookie("userHistory", builder.toString());
+            historyCookie.setMaxAge(3600);
+            response.addCookie(historyCookie);
+            request.getSession().setAttribute("userHistory", historyCookie);
+
+            System.out.println("WriteCookie: " + historyCookie + "; Name: " + historyCookie.getName() + "; Value: " + historyCookie.getValue());
+        }
         Product product = productService.getProductById(id);
         model.addAttribute(product);
         model.addAttribute(basket);
