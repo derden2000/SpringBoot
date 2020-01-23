@@ -4,7 +4,7 @@ create table categories (
     title varchar(255),
     primary key(id)
 );
-insert into categories (title) values ('Standard'), ('Professional');
+insert into categories (title) values ('Standard'), ('Professional'), ('Test');
 
 drop table IF exists products cascade;
  create table products (id bigserial, title varchar(255), price bigint, description text, category bigint, primary key (id), constraint fk_cat_id foreign key (category) references categories (id));

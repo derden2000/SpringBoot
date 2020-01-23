@@ -63,7 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .permitAll()
                 ;
-        http.csrf().ignoringAntMatchers("/api/v1/products/**");
+        http.csrf()
+                .ignoringAntMatchers("/api/v1/products/**")
+                .ignoringAntMatchers("/ws/**");
         http.addFilterBefore(ssoFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
