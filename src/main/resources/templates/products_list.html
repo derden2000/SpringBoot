@@ -116,7 +116,7 @@
             <tr th:each="pr : ${products}">
                 <td th:text="${pr.id}"/>
                 <td>
-                    <span style="font-weight: bold" th:text="${pr.title}"/>
+                    <a th:href="@{'/product/' + ${pr.id}}"><span style="font-weight: bold" th:text="${pr.title}"/></a>
                     <br>
                     <span th:text="'Категория: ' + ${pr.category.title}"/>
                 </td>
@@ -136,6 +136,19 @@
             </tbody>
         </table>
     </div>
+    <br>
+    <table class="table" th:if="${pageHistory != null}">
+        <thead>
+        <tr style="font-weight: bold;">
+            <td>Просмотренные товары</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="pr : ${pageHistory}">
+            <td th:text="${pr}"/>
+        </tr>
+        </tbody>
+    </table>
     <br>
     <span th:text="'Total items count (filtered): ' + ${productsCount} +' / '"/>
     <span th:text="'Total pages (filtered): ' + ${pagesCount}"/>

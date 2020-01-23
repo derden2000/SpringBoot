@@ -10,7 +10,7 @@ import pro.antonshu.market.repositories.ProductRepository;
 
 import java.util.List;
 
-@Service
+@Service(value = "ProductService")
 public class ProductService {
 
     private ProductRepository productRepository;

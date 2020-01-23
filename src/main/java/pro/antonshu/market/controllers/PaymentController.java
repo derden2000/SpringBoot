@@ -14,15 +14,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import pro.antonshu.market.services.OrderService;
 import pro.antonshu.market.services.payments.OrderDetail;
 import pro.antonshu.market.services.payments.PayPalService;
+import pro.antonshu.market.utils.Basket;
 
 @Controller
 public class PaymentController {
 
     private OrderService orderService;
+    private Basket basket;
+
+    @Autowired
+    public void setBasket(Basket basket) {
+        this.basket = basket;
+    }
 
     @Autowired
     public void setOrderService(OrderService orderService) {
         this.orderService = orderService;
+    }
+
+    @GetMapping("/payments")
+    public String getPaymentsPage(Model model) {
+        model.addAttribute(basket);
+        return "payments";
     }
 
     @PostMapping("/paypal/authorize_payment")
