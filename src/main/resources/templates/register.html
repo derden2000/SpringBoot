@@ -19,7 +19,7 @@
     <h1>Заполните все данные</h1>
 
     <form th:action="@{/register}" th:object="${user}" method="POST" enctype="utf8">
-        <div>
+            <div>
             <label>Имя</label>
             <input th:field="*{firstName}"/>
             <p th:each="error: ${#fields.errors('firstName')}"
@@ -49,10 +49,10 @@
             <p th:each="error : ${#fields.errors('password')}"
                th:text="${error}">Validation error</p>
         </div>
-<!--        <div>-->
-<!--            <label>Confirm password</label>-->
-<!--            <input type="password" th:field="*{matchingPassword}"/>-->
-<!--        </div>-->
+        <div>
+            <label>Confirm password</label>
+            <input type="password" th:field="*{matchingPassword}"/>
+        </div>
         <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
     </form>
 </div>

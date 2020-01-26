@@ -16,4 +16,8 @@ public interface UserService extends UserDetailsService {
     User regNewUser(User user);
 
     User save(User user);
+
+    void createPasswordResetTokenForUser(User user, String token);
+
+    void changeUserPassword(User user, String newPassword);
 }

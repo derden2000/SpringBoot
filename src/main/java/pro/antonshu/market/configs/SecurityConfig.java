@@ -52,6 +52,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasAnyRole("MANAGER", "ADMIN")
                 .antMatchers("/profile/**").authenticated()
                 .antMatchers("/order/**").authenticated()
+                .antMatchers("/user/updatePassword*",
+                        "/user/savePassword*",
+                        "/updatePassword*")
+                .hasAuthority("CHANGE_PASSWORD_PRIVILEGE")
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
