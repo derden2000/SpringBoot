@@ -9,6 +9,8 @@ public interface UserService extends UserDetailsService {
 
     User findByPhone(String phone);
 
+    User findById(Long id);
+
     boolean isUserExist(String phone);
 
     List<User> getAllUsers();

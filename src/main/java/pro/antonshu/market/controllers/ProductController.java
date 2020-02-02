@@ -1,18 +1,17 @@
 package pro.antonshu.market.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import pro.antonshu.market.entities.Product;
-import pro.antonshu.market.services.CategoryService;
-import pro.antonshu.market.services.ProductService;
+import pro.antonshu.market.entities.Review;
+import pro.antonshu.market.entities.User;
+import pro.antonshu.market.services.*;
 import pro.antonshu.market.utils.Basket;
 import pro.antonshu.market.utils.ProductFilter;
 
@@ -21,15 +20,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @Controller
+@Slf4j
 public class ProductController {
 
     private CategoryService categoryService;
     private ProductService productService;
     private Basket basket;
+    private ReviewService reviewService;
+    private UserService userService;
+    private OrderService orderService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @Autowired
+    public void setReviewService(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
 
     @Autowired
     public void setCategoryService(CategoryService categoryService) {
@@ -79,16 +97,49 @@ public class ProductController {
         return "products_list";
     }
 
-    @GetMapping("/product/{id}")
+    @GetMapping("/product")
     private String getCurrentProduct(Model model,
                                      HttpServletRequest request,
                                      HttpServletResponse response,
-                                     Principal principal, @PathVariable Long id) {
+                                     Principal principal,
+                                     @RequestParam("productId") Long id) {
         WriteHistoryCookie(request, id);
         Product product = productService.getProductById(id);
-        model.addAttribute(product);
+        final Boolean[] userCanWriteReview = {false};
+
+        if (principal != null) {
+            User user = userService.findByPhone(principal.getName());
+            model.addAttribute("user", user);
+            orderService.findAllOrdersByUserId(user.getId()).forEach(order -> order.getItems().
+                    forEach(orderItem -> {
+                        if (orderItem.getProduct().getId() == id && !reviewService.alreadyWrittenByUser(user, product)) {
+                            userCanWriteReview[0] = true;
+                        }
+                    }));
+        }
+        List<Review> reviews = reviewService.findAllByProductId(product.getId());
+        double avMark = reviews.stream().mapToDouble(Review::getScore).sum()/reviews.size();
+        model.addAttribute("averageMark", avMark);
+        model.addAttribute("userCanWriteReview", userCanWriteReview[0]);
+        model.addAttribute("product", product);
         model.addAttribute(basket);
+        model.addAttribute("reviews", reviewService.findAllByProductId(product.getId()));
         return "product";
+    }
+
+
+    @PostMapping("/reviews")
+    public String savePassword(@RequestParam("review") String reviewText,
+                               @RequestParam("userId") Long userId,
+                               @RequestParam("productId") Long productId,
+                               @RequestParam("score") Integer score,
+                               Model model) {
+        Review review = new Review(productService.findOneById(productId), userService.findById(userId), reviewText, score);
+        reviewService.save(review);
+        String message = "Yor review was successfully posted";
+        model.addAttribute("message", message);
+        model.addAttribute(basket);
+        return "blank";
     }
 
     private void WriteHistoryCookie(HttpServletRequest request, @PathVariable Long id) {
