@@ -6,10 +6,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pro.antonshu.market.entities.PasswordResetToken;
 import pro.antonshu.market.entities.Role;
 import pro.antonshu.market.entities.User;
+import pro.antonshu.market.repositories.PasswordTokenRepository;
 import pro.antonshu.market.repositories.RoleRepository;
 import pro.antonshu.market.repositories.UserRepository;
 
@@ -23,6 +26,18 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private PasswordTokenRepository passwordTokenRepository;
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setPasswordTokenRepository(PasswordTokenRepository passwordTokenRepository) {
+        this.passwordTokenRepository = passwordTokenRepository;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -74,5 +89,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public void createPasswordResetTokenForUser(User user, String token) {
+        PasswordResetToken myToken = new PasswordResetToken(token, user);
+        passwordTokenRepository.save(myToken);
+    }
+
+    @Override
+    public void changeUserPassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

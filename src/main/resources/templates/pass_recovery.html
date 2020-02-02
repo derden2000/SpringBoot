@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <title>Recover your password</title>
+
+    <link th:href="@{css/bootstrap-social.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script th:src="@{js/check_login.js}"></script>
+</head>
+
+<body>
+
+<div class="container">
+    <div th:replace="~{header :: header(Home)}" />
+
+    <h2>Welcome to our shop</h2>
+    <form class="phone-form" id="myform" th:action="@{/recovery_password_do}" method="post">
+        <label for="phone">Телефон:</label><input type="text" name="phone" id="phone" placeholder="Введите Ваш телефон">
+        <button class="btn btn-primary check-phone" th:data-num="phone" type="submit">Восстановить пароль</button>
+    </form>
+</div>
+</body>
+</html>

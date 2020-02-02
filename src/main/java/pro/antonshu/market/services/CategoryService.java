@@ -20,4 +20,13 @@ public class CategoryService {
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
+
+    public boolean existByTitle(String title) {
+        return categoryRepository.existsByTitle(title);
+    }
+
+    public Category getCategoryByTitle(String title) {
+        System.out.println("Title to find in CategoryService: " + title);
+        return categoryRepository.findOneByTitle(title);
+    }
 }

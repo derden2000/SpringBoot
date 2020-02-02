@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import pro.antonshu.market.entities.Category;
 import pro.antonshu.market.entities.Product;
 import pro.antonshu.market.repositories.ProductRepository;
 
@@ -30,6 +31,10 @@ public class ProductService {
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    public List<Product> getAllProductsByCategory(Category category) {
+        return productRepository.findAllByCategory(category);
     }
 
     public Product saveProduct(Product product) {
