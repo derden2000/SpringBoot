@@ -1,17 +1,19 @@
 package pro.antonshu.market.controllers;
 
+import com.google.gson.Gson;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pro.antonshu.market.MarketApplication;
 import pro.antonshu.market.entities.Order;
+import pro.antonshu.market.dto.OrderDto;
 import pro.antonshu.market.entities.User;
 import pro.antonshu.market.repositories.RoleRepository;
 import pro.antonshu.market.services.OrderItemService;
 import pro.antonshu.market.services.OrderService;
-import pro.antonshu.market.services.ProductService;
 import pro.antonshu.market.services.UserService;
 import pro.antonshu.market.utils.Basket;
 
@@ -28,6 +30,12 @@ public class OrderController {
     private BCryptPasswordEncoder passwordEncoder;
     private RoleRepository roleRepository;
     private Basket basket;
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -83,6 +91,7 @@ public class OrderController {
         order.setAddress(address);
         order.setItems(basket.getContent());
         orderService.saveOrder(order);
+        sendNotifyToManager(order);
         model.addAttribute("order", order);
         orderItemService.saveOrderItemList(basket.getContent(), order);
         basket.clear();
@@ -106,11 +115,19 @@ public class OrderController {
         order.setItems(basket.getContent());
         userService.save(user);
         orderService.saveOrder(order);
+        sendNotifyToManager(order);
         orderItemService.saveOrderItemList(basket.getContent(), order);
         basket.clear();
         model.addAttribute("order", order);
         model.addAttribute(basket);
         model.addAttribute("user", user);
         return "fast_order_do";
+    }
+
+    private void sendNotifyToManager(Order order) {
+        OrderDto orderDto = new OrderDto(order.getId(), order.isCompleteStatus());
+        Gson gson = new Gson();
+        String json = gson.toJson(orderDto);
+        rabbitTemplate.convertAndSend(MarketApplication.TOPIC_EXCHANGER_NAME, "raw", json);
     }
 }
