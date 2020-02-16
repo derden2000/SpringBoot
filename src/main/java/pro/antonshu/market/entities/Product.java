@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Entity
 @NoArgsConstructor
 @Data
-@Entity
 @Table(name = "products")
 public class Product {
 

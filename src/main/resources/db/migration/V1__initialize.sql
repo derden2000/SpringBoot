@@ -87,4 +87,7 @@ drop table if exists orders_items cascade;
 create table orders_items (id bigserial, order_id bigint, product_id bigint, quantity int, price numeric(8, 2), primary key(id), constraint fk_prod_id foreign key (product_id) references products (id), constraint fk_order_id foreign key (order_id) references orders (id));
 
 drop table if exists pass_tokens cascade;
-create table pass_tokens (token_id bigserial, token text, user_id bigint, expiry_date timestamp, primary key(token_id), constraint fk_user_id foreign key (user_id) references users (id));
+create table pass_tokens (id bigserial, token text, user_id bigint, expiry_date timestamp, primary key(id), constraint fk_user_id foreign key (user_id) references users (id));
+
+drop table if exists reviews cascade;
+create table reviews (id bigserial, review_text text, user_id bigint, product_id bigint, score smallint, primary key(id), constraint fk_user_id foreign key (user_id) references users (id), constraint fk_prod_id foreign key (product_id) references products (id));
