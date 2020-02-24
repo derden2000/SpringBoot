@@ -1,37 +1,95 @@
+drop table IF exists groups cascade;
+create table groups (
+    id bigserial,
+    title varchar(255),
+--    category bigint,
+    primary key(id)
+);
+insert into groups (title) values ('Ears'), ('Phones');
+
 drop table IF exists categories cascade;
 create table categories (
     id bigserial,
     title varchar(255),
-    primary key(id)
+    parent bigint,
+    primary key(id),
+    constraint fk_parent_id foreign key (parent) references groups (id)
 );
-insert into categories (title) values ('Standard'), ('Professional'), ('Test');
+insert into categories (title, parent) values ('Standard', 1), ('Professional', 1), ('Test', 1), ('Android', 2), ('Apple', 2);
+
+DROP TABLE IF EXISTS groups_categories;
+CREATE TABLE groups_categories (
+  group_id               INT NOT NULL,
+  category_id               INT NOT NULL,
+  PRIMARY KEY (group_id, category_id),
+  FOREIGN KEY (group_id)
+  REFERENCES groups (id),
+  FOREIGN KEY (category_id)
+  REFERENCES categories (id)
+);
+
+INSERT INTO groups_categories (group_id, category_id)
+VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 4),
+(2, 5);
 
 drop table IF exists products cascade;
- create table products (id bigserial, title varchar(255), price bigint, description text, category bigint, primary key (id), constraint fk_cat_id foreign key (category) references categories (id));
-  insert into products (title, price, category) values
-  ('Paypal Headphones 10', 10, 1),
-  ('Paypal Headphones 20', 20, 1),
-  ('JBL Headphones T450BT', 1080, 1),
-  ('JBL Headphones T450BT', 1080, 1),
-  ('Apple Airpods 2', 9250, 2),
-  ('Sony WH1000-XM3', 18990, 1),
-  ('Sennheiser Momentum True Wireless', 17990, 2),
-  ('Marshall Major III Bluetooth', 4550, 1),
-  ('Redmi AirDots (Mi True Wireless Earbuds Basic)', 1247, 2),
-  ('Apple AirPods Pro', 18250, 1),
-  ('Xiaomi AirDots Pro', 4550, 2),
-  ('Samsung Galaxy Buds', 7980, 1),
-  ('Xiaomi AirDots Pro 2', 3788, 2),
-  ('Xiaomi Mi True Wireless Earbuds', 1939, 1),
-  ('JBL E55BT', 2990, 2),
-  ('Huawei FreeBuds Lite', 3940, 1),
-  ('Meizu POP2', 3490, 2),
-  ('Honor FlyPods Youth Edition', 3740, 1),
-  ('Apple AirPods Color', 10499, 2),
-  ('JBL Live 500BT', 3890, 1),
-  ('Honor FlyPods', 7100, 2),
-  ('Honor AM61', 1729, 1),
-  ('Panasonic RP-HF410', 1930, 2);
+ create table products (id bigserial, title varchar(255), price bigint, description text, grp bigint, category bigint, primary key (id), constraint fk_cat_id foreign key (category) references categories (id), constraint fk_grp_id foreign key (grp) references groups (id));
+  insert into products (title, price, grp, category) values
+  ('Paypal Headphones 10', 10, 1, 1),
+  ('Paypal Headphones 20', 20, 1, 1),
+  ('JBL Headphones T450BT', 1080, 1, 1),
+  ('JBL Headphones T450BT', 1080, 1, 1),
+  ('Apple Airpods 2', 9250, 1, 2),
+  ('Sony WH1000-XM3', 18990, 1, 1),
+  ('Sennheiser Momentum True Wireless', 17990, 1, 2),
+  ('Marshall Major III Bluetooth', 4550, 1, 1),
+  ('Redmi AirDots (Mi True Wireless Earbuds Basic)', 1247, 1, 2),
+  ('Apple AirPods Pro', 18250, 1, 1),
+  ('Xiaomi AirDots Pro', 4550, 1, 2),
+  ('Samsung Galaxy Buds', 7980, 1, 1),
+  ('Xiaomi AirDots Pro 2', 3788, 1, 2),
+  ('Xiaomi Mi True Wireless Earbuds', 1939, 1, 1),
+  ('JBL E55BT', 2990, 1, 2),
+  ('Huawei FreeBuds Lite', 3940, 1, 1),
+  ('Meizu POP2', 3490, 1, 2),
+  ('Honor FlyPods Youth Edition', 3740, 1, 1),
+  ('Apple AirPods Color', 10499, 1, 2),
+  ('JBL Live 500BT', 3890, 1, 1),
+  ('Honor FlyPods', 7100, 1, 2),
+  ('Honor AM61', 1729, 1, 1),
+  ('Panasonic RP-HF410', 1930, 1, 2),
+  ('Honor 20s 6/128GB', 14400, 2, 4),
+  ('Redmi Note 8 Pro 6/128GB', 16100, 2, 4),
+  ('Honor 20 Pro 8/256GB', 24990, 2, 4),
+  ('Samsung Galaxy A51 64GB', 15500, 2, 4),
+  ('Samsung Galaxy A71 6/128GB', 25300, 2, 4),
+  ('iPhone 11 128GB', 53400, 2, 5),
+  ('iPhone 11 64GB', 48700, 2, 5),
+  ('iPhone 7 32GB', 22500, 2, 5),
+  ('iPhone Xr 64GB', 39900, 2, 5),
+  ('iPhone X 64GB', 45800, 2, 5);
+
+drop table IF exists discounts cascade;
+create table discounts (
+id                    bigserial,
+header                VARCHAR(500) NOT NULL,
+title                 VARCHAR(500),
+knob_title            VARCHAR(500),
+href                  VARCHAR(500),
+image_path            VARCHAR(500),
+PRIMARY KEY (id)
+);
+
+INSERT INTO discounts (header, title, knob_title, href, image_path)
+VALUES
+('ПроСкидка', 'Скидки на профессиональную категорию наушников', 'Выбрать наушники', '/app/products?group=1&category=2', 'https://hb.bizmrg.com/antonshu/dj_ears_carousel.jpg' ),
+('Скидки на Apple', 'Скидки на продукцию Apple', 'Выбрать телефон', '/app/products?group=2&category=5', 'https://hb.bizmrg.com/antonshu/AppleMac.jpg' ),
+('Скидки на беспроводные наушники', 'Меньше проводов - меньше цена', 'Выбрать наушники', '/app/products?group=1&category=2', 'https://hb.bizmrg.com/antonshu/volny.jpg' )
+;
 
 drop table IF exists users;
 create table users (

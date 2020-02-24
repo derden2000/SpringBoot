@@ -30,6 +30,11 @@ public class ProductFilter {
             filterDefinition.append("&max_price=").append(Integer.parseInt(map.get("max_price")));
             filterDefinitionWithoutPaging.append("&max_price=").append(Integer.parseInt(map.get("max_price")));
         }
+        if (map.containsKey("group") && !map.get("group").isEmpty()) {
+            spec = spec.and(ProductSpecification.getProductsByGroup(Integer.parseInt(map.get("group"))));
+            filterDefinition.append("&group=").append(Integer.parseInt(map.get("group")));
+            filterDefinitionWithoutPaging.append("&group=").append(Integer.parseInt(map.get("group")));
+        }
         if (map.containsKey("category") && !map.get("category").isEmpty()) {
             spec = spec.and(ProductSpecification.getProductsByCategory(Integer.parseInt(map.get("category"))));
             filterDefinition.append("&category=").append(Integer.parseInt(map.get("category")));

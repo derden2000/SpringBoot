@@ -3,6 +3,7 @@ package pro.antonshu.market.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pro.antonshu.market.entities.Category;
+import pro.antonshu.market.entities.Group;
 import pro.antonshu.market.repositories.CategoryRepository;
 
 import java.util.List;
@@ -19,6 +20,10 @@ public class CategoryService {
 
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
+    }
+
+    public List<Category> getAllCategoriesByGroup(Group parent) {
+        return categoryRepository.findAllByGroup(parent);
     }
 
     public boolean existByTitle(String title) {

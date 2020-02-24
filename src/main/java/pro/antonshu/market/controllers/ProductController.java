@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import pro.antonshu.market.entities.Group;
 import pro.antonshu.market.entities.Product;
 import pro.antonshu.market.entities.Review;
 import pro.antonshu.market.entities.User;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class ProductController {
 
     private CategoryService categoryService;
+    private GroupService groupService;
     private ProductService productService;
     private Basket basket;
     private ReviewService reviewService;
@@ -52,6 +54,11 @@ public class ProductController {
     @Autowired
     public void setCategoryService(CategoryService categoryService) {
         this.categoryService = categoryService;
+    }
+
+    @Autowired
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     @Autowired
@@ -83,6 +90,10 @@ public class ProductController {
         if (params.containsKey("sort_by") && !params.get("sort_by").isEmpty()) {
             sortBy = params.get("sort_by");
         }
+        String groupId = null;
+        if (params.containsKey("group") && !params.get("group").isEmpty()) {
+            groupId = params.get("group");
+        }
 
         PageRequest pageRequest = PageRequest.of(pageIndex - 1, pageValuesNum, Sort.Direction.ASC, sortBy);
         ProductFilter productFilter = new ProductFilter(params);
@@ -92,7 +103,16 @@ public class ProductController {
         model.addAttribute("basket", basket);
         model.addAttribute("filtersDef", productFilter.getFilterDefinition());
         model.addAttribute("filtersDefWP", productFilter.getFilterDefinitionWithoutPaging());
-        model.addAttribute("categories", categoryService.getAllCategories());
+        if (groupId != null) {
+            model.addAttribute("group", groupService.getGroupById(groupId));
+            Group group = groupService.getGroupById(groupId);
+            System.out.println();
+            System.out.println("Categories of group: " + group.getCategories());
+            System.out.println();
+            model.addAttribute("categories", group.getCategories());
+        } else {
+            model.addAttribute("group", groupService.getAllGroups());
+        }
 
         return "products_list";
     }
@@ -118,7 +138,7 @@ public class ProductController {
                     }));
         }
         List<Review> reviews = reviewService.findAllByProductId(product.getId());
-        double avMark = reviews.stream().mapToDouble(Review::getScore).sum()/reviews.size();
+        double avMark = reviews.stream().mapToDouble(Review::getScore).sum() / reviews.size();
         model.addAttribute("averageMark", avMark);
         model.addAttribute("userCanWriteReview", userCanWriteReview[0]);
         model.addAttribute("product", product);
@@ -180,6 +200,7 @@ public class ProductController {
 
     private void createContent(Page<Product> page, Model model) {
         model.addAttribute("products", page.getContent());
+//        model.addAttribute("groups", page.getContent());
         model.addAttribute("productsCount", page.getTotalElements());
         model.addAttribute("pagesCount", page.getTotalPages());
         model.addAttribute("next", page.nextOrLastPageable().getPageNumber());

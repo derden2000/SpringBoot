@@ -8,11 +8,13 @@ import pro.antonshu.market.entities.Group;
 import java.util.List;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface GroupRepository extends JpaRepository<Group, Long> {
 
-    Category findOneByTitle(String title);
+    Group findOneByTitle(String title);
+
+    Group findOneById(Long Id);
 
     boolean existsByTitle(String title);
 
-    List<Category> findAllByGroup(Group group);
+//    Group findOneByCategory(Long categoryId);
 }
