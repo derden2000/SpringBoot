@@ -2,7 +2,6 @@ package pro.antonshu.market.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pro.antonshu.market.entities.User;
 
 
 @Data
