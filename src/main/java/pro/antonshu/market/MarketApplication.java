@@ -46,6 +46,7 @@ public class MarketApplication {
 		return new MessageListenerAdapter(receiver, "receiveMessage");
 	}
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(MarketApplication.class, args);
 	}
