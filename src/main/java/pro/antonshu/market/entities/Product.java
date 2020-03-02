@@ -24,6 +24,10 @@ public class Product {
     private String description;
 
     @ManyToOne
+    @JoinColumn(name = "grp")
+    private Group group;
+
+    @ManyToOne
     @JoinColumn(name = "category")
 //    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private Category category;

@@ -7,14 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import pro.antonshu.market.entities.Category;
-import pro.antonshu.market.entities.Order;
-import pro.antonshu.market.entities.Product;
-import pro.antonshu.market.entities.User;
-import pro.antonshu.market.services.CategoryService;
-import pro.antonshu.market.services.OrderService;
-import pro.antonshu.market.services.ProductService;
-import pro.antonshu.market.services.UserService;
+import pro.antonshu.market.entities.*;
+import pro.antonshu.market.services.*;
 import pro.antonshu.market.utils.Basket;
 
 import java.security.Principal;
@@ -27,8 +21,14 @@ public class MainController {
     private CategoryService categoryService;
     private UserService userService;
     private OrderService orderService;
+    private DiscountService discountService;
 
     private Basket basket;
+
+    @Autowired
+    public void setDiscountService(DiscountService discountService) {
+        this.discountService = discountService;
+    }
 
     @Autowired
     public void setProductService(ProductService productService) {
@@ -58,6 +58,9 @@ public class MainController {
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute(basket);
+        List<Discount> discounts = discountService.findAll();
+        discounts.forEach(d -> System.out.println(d.getHeader() + ", href:" + d.getHref()));
+        model.addAttribute("discounts", discountService.findAll());
         return "index";
     }
 

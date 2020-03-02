@@ -33,4 +33,9 @@ public class ProductSpecification {
         };
     }
 
+    public static Specification<Product> getProductsByGroup(int groupId) {
+        return (Specification<Product>) (root, criteriaQuery, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("group"), groupId);
+        };
+    }
 }
