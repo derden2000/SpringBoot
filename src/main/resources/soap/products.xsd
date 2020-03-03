@@ -3,10 +3,10 @@
            xmlns:tns="http://market.antonshu.pro/soap/products"
            targetNamespace="http://market.antonshu.pro/soap/products"
            elementFormDefault="qualified">
-    <xs:element name="getProductsByCategoryRequest">
+    <xs:element name="getProductsByGroupRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="category" type="xs:string"/>
+                <xs:element name="group" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -15,11 +15,11 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="getProductsByCategoryResponse">
+    <xs:element name="getProductsByGroupResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="description" type="xs:string"/>
-                <xs:element name="category" type="xs:string"/>
+                <xs:element name="group" type="xs:string"/>
                 <xs:element name="productsList" type="tns:productsList"/>
             </xs:sequence>
         </xs:complexType>
@@ -36,7 +36,7 @@
     <xs:complexType name="ProductDto">
         <xs:sequence>
             <xs:element name="title" type="xs:string"/>
-            <xs:element name="category" type="xs:string"/>
+            <xs:element name="group" type="xs:string"/>
             <xs:element name="price" type="xs:double"/>
         </xs:sequence>
     </xs:complexType>

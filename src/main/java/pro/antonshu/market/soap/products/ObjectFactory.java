@@ -37,27 +37,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetProductsByCategoryRequest }
+     * Create an instance of {@link GetProductsByGroupRequest }
      * 
      */
-    public GetProductsByCategoryRequest createGetProductsByCategoryRequest() {
-        return new GetProductsByCategoryRequest();
+    public GetProductsByGroupRequest createGetProductsByGroupRequest() {
+        return new GetProductsByGroupRequest();
     }
 
     /**
-     * Create an instance of {@link GetAllProductsRequest }
+     * Create an instance of {@link GetProductsByGroupResponse }
      * 
      */
-    public GetAllProductsRequest createGetAllProductsRequest() {
-        return new GetAllProductsRequest();
-    }
-
-    /**
-     * Create an instance of {@link GetProductsByCategoryResponse }
-     * 
-     */
-    public GetProductsByCategoryResponse createGetProductsByCategoryResponse() {
-        return new GetProductsByCategoryResponse();
+    public GetProductsByGroupResponse createGetProductsByGroupResponse() {
+        return new GetProductsByGroupResponse();
     }
 
     /**
@@ -66,6 +58,14 @@ public class ObjectFactory {
      */
     public ProductsList createProductsList() {
         return new ProductsList();
+    }
+
+    /**
+     * Create an instance of {@link GetAllProductsRequest }
+     * 
+     */
+    public GetAllProductsRequest createGetAllProductsRequest() {
+        return new GetAllProductsRequest();
     }
 
     /**
