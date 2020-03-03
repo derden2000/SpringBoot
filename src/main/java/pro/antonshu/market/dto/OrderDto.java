@@ -11,7 +11,6 @@ public class OrderDto {
     private Long id;
     private boolean completeStatus;
     private UserDto userDto;
-    private boolean completeStatus;
     private boolean paymentStatus;
 
 

@@ -7,6 +7,7 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import pro.antonshu.market.services.CategoryService;
+import pro.antonshu.market.services.GroupService;
 import pro.antonshu.market.services.ProductService;
 import pro.antonshu.market.soap.products.*;
 
@@ -20,37 +21,38 @@ public class ProductsEndPoint {
     private static final String NAMESPACE_URI = "http://market.antonshu.pro/soap/products";
 
     private ProductService productService;
-    private CategoryService categoryService;
+    private GroupService groupService;
+
+    @Autowired
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
+    }
 
     @Autowired
     public void setProductService(ProductService productService) {
         this.productService = productService;
     }
 
-    @Autowired
-    public void setCategoryService(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
-    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getProductsByCategoryRequest")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "getProductsByGroupRequest")
     @ResponsePayload
-    public GetProductsByCategoryResponse getProducts(@RequestPayload GetProductsByCategoryRequest request) throws DatatypeConfigurationException {
-        GetProductsByCategoryResponse response = new GetProductsByCategoryResponse();
+    public GetProductsByGroupResponse getProducts(@RequestPayload GetProductsByGroupRequest request) throws DatatypeConfigurationException {
+        GetProductsByGroupResponse response = new GetProductsByGroupResponse();
         ProductsList productsList = new ProductsList();
         List<ProductDto> responseList = new ArrayList<>();
-        if (categoryService.existByTitle(request.getCategory())) {
-            productService.getAllProductsByCategory(categoryService.getCategoryByTitle(request.getCategory())).stream().forEach(p -> responseList.add(new ProductDto(p)));
+        if (groupService.existByTitle(request.getGroup())) {
+            productService.getAllProductsByGroup(groupService.getGroupByTitle(request.getGroup())).stream().forEach(p -> responseList.add(new ProductDto(p)));
             if (responseList.size() > 0) {
                 productsList.setProductsList(responseList);
                 response.setProductsList(productsList);
-                response.setCategory(request.getCategory());
-                response.setDescription("List of Products with needed category");
+                response.setGroup(request.getGroup());
+                response.setDescription("List of Products with needed Group");
             } else {
-                response.setDescription(String.format("There is no products with needed Category: %s", request.getCategory()));
+                response.setDescription(String.format("There is no products with needed Group: %s", request.getGroup()));
             }
 
         } else {
-            response.setDescription(String.format("This Category(%s) does not exist", request.getCategory()));
+            response.setDescription(String.format("This Group(%s) does not exist", request.getGroup()));
         }
         return response;
     }

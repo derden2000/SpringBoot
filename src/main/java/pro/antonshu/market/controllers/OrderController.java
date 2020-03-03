@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pro.antonshu.market.MarketApplication;
+import pro.antonshu.market.configs.RabbitConfiguration;
 import pro.antonshu.market.entities.Order;
 import pro.antonshu.market.dto.OrderDto;
 import pro.antonshu.market.entities.User;
@@ -128,6 +128,6 @@ public class OrderController {
         OrderDto orderDto = new OrderDto(order.getId(), order.isCompleteStatus());
         Gson gson = new Gson();
         String json = gson.toJson(orderDto);
-        rabbitTemplate.convertAndSend(MarketApplication.TOPIC_EXCHANGER_NAME, "raw", json);
+        rabbitTemplate.convertAndSend(RabbitConfiguration.topicExchangerName, "raw", json);
     }
 }
